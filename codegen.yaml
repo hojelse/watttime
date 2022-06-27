@@ -1,0 +1,14 @@
+# Config file for graphql-code-generator
+# npm package: graphql-codegen
+schema:
+  - https://data-api.energidataservice.dk/v1/graphql
+documents:
+  - './src/**/*.tsx'
+generates:
+  graphql/generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+  graphql/graphql.schema.json:
+    plugins:
+      - "introspection"
