@@ -197,7 +197,17 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
                 dominantBaseline="hanging"
                 dy="1em"
               >
-                {`${date.toLocaleString("da-DK", { hour: "2-digit" })}`}
+                {`${date.toLocaleString("da-DK", { hour: "2-digit" })}h`}
+              </text>
+              <text
+                x={scaleX(x(date))}
+                y={BASELINE}
+                font-size="0.006em"
+                textAnchor="middle"
+                dominantBaseline="hanging"
+                dy="3em"
+              >
+                {`${date.toLocaleString("da-DK", { weekday: "short" })}`}
               </text>
               <text
                 x={scaleX(x(date)+0.5)}
