@@ -41,8 +41,54 @@ function App() {
   return (
     <>
       <Chart data={data}/>
+      <Table data={data}/>
     </>
   )
+}
+
+export function Table({ data } : { data: DatasetQuery | undefined }) {
+  if (data == undefined) return null
+
+  var prices = data.elspotprices
+
+  const pricesTransformed = prices.map(
+    ({HourDK, SpotPriceEUR}) => {
+
+    const priceEur = SpotPriceEUR as number;
+    const moms = 1.25;
+    const eurToDkk = 7.5;
+    const mwtToKwt = 0.001;
+    const price = priceEur * moms * eurToDkk * mwtToKwt;
+
+    return {
+      date: new Date(HourDK),
+      price: price
+    }
+  })
+
+  const [dataset, setDataset] = useState(pricesTransformed)
+
+
+  return <table
+    width={"100%"}
+    >
+    <tr>
+      <th>Hour</th>
+      <th>Price</th>
+      <th>Date</th>
+      <th>Weekday</th>
+    </tr>
+    {
+      dataset.map(({ date, price }) => {
+        return <tr>
+          <td>{Math.round(price*100)/100} DKK </td>
+          <td>{date.toLocaleString("da-DK", { hour: 'numeric', minute: 'numeric' })}</td>
+          <td>{date.toLocaleString("da-DK", { year: 'numeric', month: 'long', day: 'numeric', })}</td>
+          <td>{date.toLocaleString("da-DK", { weekday: "long" })}</td>
+        </tr>
+      })
+    }
+  </table>
 }
 
 export function Chart({ data } : { data: DatasetQuery | undefined }) {
