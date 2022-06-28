@@ -70,11 +70,13 @@ export function Table({ data } : { data: DatasetQuery | undefined }) {
 
 
   return <table
-    width={"100%"}
+      style={{
+        minWidth: "100%"
+      }}
     >
     <tr>
-      <th>Hour</th>
       <th>Price</th>
+      <th>Hour</th>
       <th>Date</th>
       <th>Weekday</th>
     </tr>
