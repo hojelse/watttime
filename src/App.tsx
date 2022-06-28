@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import logo from './logo.svg'
+import styled from 'styled-components'
 import './App.css'
 import type { DatasetQuery }  from '../graphql/generated'
 import { GraphQLClient, gql } from 'graphql-request'
@@ -137,11 +137,8 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
 
   return (
     <svg viewBox={`-1 -1 ${scaleX(XMAX)+2} ${YMAX+2}`} style={{height: "100vh"}}>
-      <path
-        d={`M 0 ${BASELINE - YMAX} L 0 ${BASELINE} L ${scaleX(XMAX+1)} ${BASELINE}`}
-        fill="none"
-        stroke="hsl(0, 0%, 20%)"
-        strokeWidth="var(--chart-border-width)"
+      <Baseline
+        d={`M 0 ${BASELINE} L ${scaleX(XMAX+1)} ${BASELINE}`}
       />
       {
         yaxis.map(y => {
@@ -158,7 +155,7 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
                 {`${y} DKK/KWh`}
               </text>
               <path
-                d={`M 0 ${BASELINE-y} l ${scaleX(XMAX)} 0`}
+                d={`M 0 ${BASELINE-y} l ${scaleX(XMAX+1)} 0`}
                 fill="none"
                 stroke="hsl(0, 0%, 20%)"
                 strokeWidth="var(--chart-divider-width)"
@@ -237,5 +234,13 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
     </svg>
   )
 }
+
+
+const Baseline = styled.path`
+  fill: none;
+  stroke: hsl(0, 0%, 20%);
+  stroke-width: var(--chart-border-width);
+  stroke-linecap: round;
+`
 
 export default App
