@@ -40,9 +40,3 @@
 button {
   font-size: calc(10px + 2vmin);
 }
-
-:root {
-  --chart-border-width: 0.02;
-  --chart-divider-width: 0.003;
-  --color-hue-primary: 190;
-}
