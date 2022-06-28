@@ -83,7 +83,7 @@ export function Table({ data } : { data: DatasetQuery | undefined }) {
     {
       dataset.map(({ date, price }) => {
         return <tr>
-          <td>{Math.round(price*100)/100} DKK/KWh </td>
+          <td>{Math.round(price*1000)/1000} DKK/KWh </td>
           <td>{date.toLocaleString("da-DK", { hour: 'numeric', minute: 'numeric' })}</td>
           <td>{date.toLocaleString("da-DK", { year: 'numeric', month: 'long', day: 'numeric', })}</td>
           <td>{date.toLocaleString("da-DK", { weekday: "long" })}</td>
