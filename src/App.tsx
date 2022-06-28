@@ -14,7 +14,7 @@ query Dataset {
     order_by: {
       HourUTC: desc
     }
-    limit: 168
+    limit: 48
     offset: 0
   )
   {HourUTC HourDK PriceArea SpotPriceDKK SpotPriceEUR }
@@ -83,7 +83,7 @@ export function Table({ data } : { data: DatasetQuery | undefined }) {
     {
       dataset.map(({ date, price }) => {
         return <tr>
-          <td>{Math.round(price*100)/100} DKK </td>
+          <td>{Math.round(price*100)/100} DKK/KWh </td>
           <td>{date.toLocaleString("da-DK", { hour: 'numeric', minute: 'numeric' })}</td>
           <td>{date.toLocaleString("da-DK", { year: 'numeric', month: 'long', day: 'numeric', })}</td>
           <td>{date.toLocaleString("da-DK", { weekday: "long" })}</td>
@@ -116,31 +116,32 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
  
   const [dataset, setDataset] = useState(pricesTransformed)
 
-  
   const XMAX = dataset.length-1
-  let YMAX = dataset.reduce((prev, curr) => {
-    return curr.price > prev ? curr.price : prev;
-  }, 0)
-  YMAX = Math.round(YMAX) + 1
+  const maxEntry = d3.max(dataset, (x) => x.price)
+  const YMAX = Math.round(maxEntry ?? 0) + 1
   const BASELINE = YMAX
 
+  const yaxis = d3.range(6)
+  
+  const scaleX = d3.scaleLinear()
+    .domain([0, XMAX])
+    .range([0, 10])
+
   let x = d3.scaleTime()
-    .domain([dataset[0].date, dataset[167].date])
+    .domain([dataset[0].date, dataset[dataset.length-1].date])
     .range([ 0, XMAX ])
 
   const stepCurve = dataset.reduce((prev, curr, idx) => {
-    return `${prev},${BASELINE - curr.price} l 1,0 L ${idx+1}`
-  }, "M 0") + "0"
-
-  const yaxis = [0, 1, 2, 3, 4, 5]
+    return `${prev},${BASELINE - curr.price} l ${scaleX(1)},0 L ${scaleX(idx+1)}`
+  }, "M 0")
 
   return (
-    <svg viewBox={`-1 -1 ${XMAX+3} ${YMAX+2}`} style={{height: "100vh"}}>
+    <svg viewBox={`-1 -1 ${scaleX(XMAX)+2} ${YMAX+2}`} style={{height: "100vh"}}>
       <path
-        d={`M 0 ${BASELINE - YMAX} L 0 ${BASELINE} L ${XMAX+1} ${BASELINE}`}
+        d={`M 0 ${BASELINE - YMAX} L 0 ${BASELINE} L ${scaleX(XMAX+1)} ${BASELINE}`}
         fill="none"
-        stroke="#000"
-        strokeWidth="0.05"
+        stroke="hsl(0, 0%, 20%)"
+        strokeWidth="var(--chart-border-width)"
       />
       {
         yaxis.map(y => {
@@ -149,49 +150,63 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
               <text
                 x={0}
                 y={BASELINE-y}
-                font-size="0.01em"
+                font-size="0.006em"
                 textAnchor="end"
                 dominantBaseline="central"
                 dx="-1em"
               >
-                {`${y} DKK`}
+                {`${y} DKK/KWh`}
               </text>
               <path
-                d={`M 0 ${BASELINE-y} l ${XMAX+1} 0`}
+                d={`M 0 ${BASELINE-y} l ${scaleX(XMAX)} 0`}
                 fill="none"
-                stroke="#000"
-                strokeWidth="0.01"
+                stroke="hsl(0, 0%, 20%)"
+                strokeWidth="var(--chart-divider-width)"
               />
             </>
           )
         })
       }
-      <path
-        d={stepCurve}
-        fill="none"
-        stroke="#000"
-        strokeWidth="0.05"
-      />
+      <defs>
+        <linearGradient
+          id="Gradient1"
+          x1={0}
+          x2={0}
+          y1={0}
+          y2={1}
+        >
+          <stop offset="0%" stopColor="hsla(var(--color-hue-primary), 50%, 50%, 0.6)"/>
+          <stop offset="100%" stopColor="hsla(var(--color-hue-primary), 50%, 50%, 0.1)"/>
+        </linearGradient>
+      </defs>
       {
         dataset.map(({date, price}) => {
           return (
             <>
+              <path
+                d={`M ${scaleX(x(date))} ${BASELINE-price} L ${scaleX(x(date))} ${BASELINE}`}
+                fill="none"
+                stroke="hsla(var(--color-hue-primary), 100%, 40%, 1)"
+                strokeWidth="var(--chart-divider-width)"
+              />
               <text
-                x={x(date)}
+                x={scaleX(x(date))}
                 y={BASELINE}
-                font-size="0.01em"
+                font-size="0.006em"
                 textAnchor="middle"
                 dominantBaseline="hanging"
-                dy="0.5em"
+                dy="1em"
               >
-                {date.toLocaleString("da-DK", { hour: "2-digit", minute: "2-digit" })}
+                {`${date.toLocaleString("da-DK", { hour: "2-digit" })}`}
               </text>
               <text
-                x={x(date)+0.5}
+                x={scaleX(x(date)+0.5)}
                 y={BASELINE-price}
-                font-size="0.01em"
+                font-size="0.006em"
                 textAnchor="middle"
-                dy="-0.5em"
+                fontWeight="bold"
+                fill="hsl(var(--color-hue-primary), 100%, 30%)"
+                dy="-2em"
               >
                 {Math.round(price*100)/100}
               </text>
@@ -199,6 +214,16 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
           )
         })
       }
+      <path
+        d={`${stepCurve} ${BASELINE} L ${0} ${BASELINE} z`}
+        fill="url(#Gradient1)"
+      />
+      <path
+        d={stepCurve}
+        fill="none"
+        stroke="hsla(var(--color-hue-primary), 100%, 40%, 1)"
+        strokeWidth="var(--chart-border-width)"
+      />
     </svg>
   )
 }
