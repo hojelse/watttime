@@ -14,7 +14,7 @@ query Dataset {
     order_by: {
       HourUTC: desc
     }
-    limit: 33
+    limit: 36
     offset: 0
   )
   {HourUTC HourDK PriceArea SpotPriceDKK SpotPriceEUR }
