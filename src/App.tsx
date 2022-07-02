@@ -99,8 +99,8 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
  
   const [dataset, setDataset] = useState(transformedPrices)
 
-  const CANVAS_WIDTH = 4
-  const CANVAS_HEIGHT = 4
+  const CANVAS_WIDTH = 5
+  const CANVAS_HEIGHT = 5
 
   const XMAX = dataset.length-1
   const maxPrice = d3.max(dataset, (x) => x.price)
@@ -130,7 +130,7 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
       {
         yaxis.map(y => {
           return <>
-              <Price x={0} y={BASELINE-Y(y)} dx="-1em" >
+              <Price x={0} y={BASELINE-Y(y)} dx="-0.2" >
                 {`${y}`}
               </Price>
               <ChartDividerY d={`M 0 ${BASELINE-Y(y)} l ${X(XMAX+1)} 0`} />
@@ -152,26 +152,26 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
               d={`M ${X(x(date))} ${BASELINE-Y(price)} L ${X(x(date))} ${BASELINE}`}
             />
             {
-              (isLocalMin )
+              (isLocalMin)
               ? <path
                   d={`M ${X(x(date))},${BASELINE-Y(price)} L${X(x(date)+1)},${BASELINE-Y(price)} L${X(x(date)+1)},${BASELINE} L${X(x(date))},${BASELINE}`}
                   fill="hsla(var(--color-hue-primary), 50%, 80%, 0.9)"
                 />
               : null
             }
-            <DateHour x={X(x(date)+0.5)} y={BASELINE} dy="1em" >
+            <DateHour x={X(x(date)+0.5)} y={BASELINE} dy="0.1" >
               {`${date.toLocaleString("da-DK", { hour: "2-digit" })}`}
             </DateHour>
             {
               (is00 || isStart)
-              ? <DateWeekday x={X(x(date))} y={BASELINE} dy="3em" >
+              ? <DateWeekday x={X(x(date))} y={BASELINE} dy="0.3" >
                   {`${date.toLocaleString("da-DK", { weekday: "long" })}`}
                 </DateWeekday>
               : null
             }
             {
               (isLocalM || isEnd)
-              ? <ColumnText x={X(x(date)+0.5)} y={BASELINE-Y(price)} dy="-2em" >
+              ? <ColumnText x={X(x(date)+0.5)} y={BASELINE-Y(price)} dy="-0.2" >
                   {Math.round(price*100)/100}
                 </ColumnText>
               : null
@@ -210,8 +210,9 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
 }
 
 const Canvas = styled.svg`
-  min-width: 100vw;
-  height: 100vh;
+  width: 100vw;
+  max-height: 100vw;
+  max-height: 100vh;
 `
 
 const Gradient = styled.path`
