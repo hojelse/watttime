@@ -96,8 +96,10 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
   if (data == undefined) return null
   var prices = data.elspotprices
   const transformedPrices = transformPrices()
- 
-  const [dataset, setDataset] = useState(transformedPrices)
+  
+  const currentDate = new Date()
+  currentDate.setHours(new Date().getHours() - 1)
+  const [dataset, setDataset] = useState(transformedPrices.filter(x => currentDate < x.date))
 
   const CANVAS_WIDTH = 5
   const CANVAS_HEIGHT = 5
@@ -121,7 +123,6 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
     .range([0, CANVAS_HEIGHT])
 
   const BASELINE = Y(YMAX)
-
 
   const stepCurve = createStepCurve()
 
