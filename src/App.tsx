@@ -130,7 +130,7 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
       {
         yaxis.map(y => {
           return <>
-              <Price x={0} y={BASELINE-Y(y)} dx="-0.2" >
+              <Price x={0} y={BASELINE-Y(y)} dominant-baseline="central" dx="-0.2" >
                 {`${y}`}
               </Price>
               <ChartDividerY d={`M 0 ${BASELINE-Y(y)} l ${X(XMAX+1)} 0`} />
@@ -159,12 +159,12 @@ export function Chart({ data } : { data: DatasetQuery | undefined }) {
                 />
               : null
             }
-            <DateHour x={X(x(date)+0.5)} y={BASELINE} dy="0.1" >
+            <DateHour x={X(x(date)+0.5)} y={BASELINE} dominant-baseline="hanging" dy="0.1" >
               {`${date.toLocaleString("da-DK", { hour: "2-digit" })}`}
             </DateHour>
             {
               (is00 || isStart)
-              ? <DateWeekday x={X(x(date))} y={BASELINE} dy="0.3" >
+              ? <DateWeekday x={X(x(date))} y={BASELINE} dominant-baseline="hanging" dy="0.3" >
                   {`${date.toLocaleString("da-DK", { weekday: "long" })}`}
                 </DateWeekday>
               : null
@@ -235,21 +235,18 @@ const ChartDividerX = styled.path`
 const Price = styled.text`
   fill: var(--color-foreground);
   text-anchor: end;
-  dominant-baseline: central;
   font-size: 0.006em;
 `
 
 const DateHour = styled.text`
   fill: var(--color-foreground);
   text-anchor: middle;
-  dominant-baseline: hanging;
   font-size: 0.006em;
 `
 
 const DateWeekday = styled.text`
   fill: var(--color-foreground);
   text-anchor: start;
-  dominant-baseline: hanging;
   font-size: 0.006em;
 `
 
