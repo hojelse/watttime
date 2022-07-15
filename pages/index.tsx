@@ -50,13 +50,14 @@ function tranformPrice(SpotPriceEUR: any) {
 }
 
 
-export async function getServerSideProps() {
-  // Fetch data from external API
+export async function getStaticProps() {
   const res = await fetch(`https://api.energidataservice.dk/dataset/Elspotprices?limit=36&offset=0&sort=HourUTC DESC&timezone=utc+1&filter={"PriceArea":"DK2"}`)
   const data = await res.json()
 
-  // Pass data to the page via props
-  return { props: { data } }
+  return {
+    props: { data },
+    revalidate: 60*60
+  }
 }
 
 export default Home
