@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
-import { Table } from './Table'
-import { Chart } from './Chart'
+import { Table } from '../components/Table'
+import { Chart } from '../components/Chart'
 
 export type DataEntries = {
   date: Date

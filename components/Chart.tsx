@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import { useEffect, useState } from 'react'
-import { DataEntries } from './index'
+import { DataEntries } from '../pages/index'
 import styled from 'styled-components'
 
 export function Chart({ data }: { data: DataEntries }) {

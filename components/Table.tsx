@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { DataEntries } from './index'
+import { DataEntries } from '../pages/index'
 
 export function Table({ data }: { data: DataEntries }) {
 
