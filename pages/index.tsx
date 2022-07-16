@@ -5,6 +5,7 @@ import { Chart } from '../components/Chart'
 export type DataEntries = {
   date: Date
   price: number
+  isFuture: boolean
 }[]
 
 type Data = {
@@ -22,12 +23,19 @@ type Data = {
 
 const Home: NextPage<Data> = ({ data }) => {
   const prices = data.records
+
+  const currentDate = new Date()
+  currentDate.setHours(new Date().getHours() - 1)
+  
   const pricesTransformed = prices.map(
     ({HourDK, SpotPriceEUR}) => {
+    
+    const newDate: Date = new Date(HourDK)
 
     return {
-      date: new Date(HourDK),
-      price: tranformPrice(SpotPriceEUR)
+      date: newDate,
+      price: tranformPrice(SpotPriceEUR),
+      isFuture: currentDate < newDate
     }
   })
 
@@ -51,7 +59,7 @@ function tranformPrice(SpotPriceEUR: any) {
 
 
 export async function getStaticProps() {
-  const res = await fetch(`https://api.energidataservice.dk/dataset/Elspotprices?limit=36&offset=0&sort=HourUTC DESC&timezone=utc+1&filter={"PriceArea":"DK2"}`)
+  const res = await fetch(`https://api.energidataservice.dk/dataset/Elspotprices?limit=48&offset=0&sort=HourUTC DESC&timezone=utc+1&filter={"PriceArea":"DK2"}`)
   const data = await res.json()
 
   return {
