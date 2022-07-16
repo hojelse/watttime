@@ -11,7 +11,10 @@ export function Chart({ data }: { data: DataEntries }) {
   currentDate.setHours(new Date().getHours() - 1)
   
   useEffect(() => {
-    setDataset(data.filter(x => currentDate < x.date))
+    const data2 = data
+    // const filtered = data2.filter(x => currentDate < x.date)
+    const flipped = data2.slice().reverse()
+    setDataset(flipped)
   }, [])
 
   if (dataset === undefined)
@@ -64,7 +67,7 @@ export function Chart({ data }: { data: DataEntries }) {
           const isLocalMin = (before > price && price < after) || (isEnd && before > price)
           const isLocalM = isLocalMax || isLocalMin
           const is00 = date.getHours() == 0
-          return <>
+          return <g key={`g-${date.toISOString()}`}>
             <ChartDividerX
               d={`M ${X(x(date))} ${BASELINE-Y(price)} L ${X(x(date))} ${BASELINE}`}
             />
@@ -93,7 +96,7 @@ export function Chart({ data }: { data: DataEntries }) {
                 </ColumnText>
               : null
             }
-          </>
+          </g>
         })
       }
       <Gradient d={`${stepCurve} ${BASELINE} L ${0} ${BASELINE} z`} />
