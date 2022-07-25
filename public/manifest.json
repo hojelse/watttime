@@ -1,0 +1,11 @@
+{
+  "name": "elpris i danmark",
+  "short_name": "elpris",
+  "theme_color": "#ffffff",
+  "background_color": "#004740",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "splash_pages": null
+}
