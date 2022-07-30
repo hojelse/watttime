@@ -39,7 +39,7 @@ const localeFormat : Intl.DateTimeFormatOptions = {
 export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => {
   const [numHoursShown, setNumHoursShown] = useState(48)
 
-  const boundArea = useRef<SVGSVGElement>(null)
+  const boundArea = useRef<SVGRectElement>(null)
 
   const [ref, dms] = useChartDimensions(chartSettings)
 
@@ -80,7 +80,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
     const rect = boundArea.current?.getBoundingClientRect()
     setHighlightOffset((rect) ? e.clientX - (rect.left) : undefined)
   }
-  
+
   boundArea.current?.addEventListener("pointerdown", e => {
     boundArea.current?.setPointerCapture(e.pointerId)
     setStuff(e)
@@ -88,6 +88,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
     boundArea.current?.addEventListener("pointermove", setStuff)
     boundArea.current?.addEventListener("pointerup", () => {
       setHighlightOffset(undefined)
+      boundArea.current?.releasePointerCapture(e.pointerId)
       boundArea.current?.removeEventListener("pointermove", setStuff)
     }, {once: true})
   }, {once: true})
@@ -113,20 +114,25 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
         height: "100%",
         width: "100%",
         backgroundColor: "hsl(0, 0%, 97%)",
+        touchAction: "none"
       }}
       ref={ref}
     >
       <svg width={dms.width} height={dms.height}>
+        <defs>
+            <clipPath id="clipPath">
+                <rect x={0} y={0} width={dms.boundedWidth} height={dms.boundedHeight} />
+            </clipPath>
+        </defs>
         <g
-          ref={boundArea}
-          width={dms.boundedWidth}
-          height={dms.boundedHeight}
           transform={`translate(${[
             dms.marginLeft,
             dms.marginTop
           ].join(",")})`}
+          clipPath="url(#clipPath)"
         >
           <rect
+            ref={boundArea}
             width={dms.boundedWidth}
             height={dms.boundedHeight}
             fill="hsl(0, 0%, 95%)"
