@@ -103,8 +103,8 @@ export function Chart({ data }: { data: DataEntries }) {
       <Baseline d={`M 0 ${BASELINE} L ${X(XMAX+1)} ${BASELINE}`} />
       <defs>
         <linearGradient id="Gradient1" x1={0} x2={0} y1={0} y2={1} >
-          <stop offset="0%" stopColor={`hsla(var(--color-hue-primary), 50%, 50%, 0.6)`}/>
-          <stop offset="100%" stopColor="hsla(var(--color-hue-primary), 50%, 50%, 0.1)"/>
+          <stop offset="0%" stopColor={`hsla(var(--color-hue), 50%, 50%, 0.6)`}/>
+          <stop offset="100%" stopColor="hsla(var(--color-hue), 50%, 50%, 0.1)"/>
         </linearGradient>
         <linearGradient id="Gradient2" x1={0} x2={0} y1={0} y2={1} >
           <stop offset="0%" stopColor={`hsla(0, 0%, 0%, 0.6)`}/>
@@ -133,31 +133,31 @@ const Gradient = styled.path<{isFuture: boolean}>`
 
 const ChartDividerY = styled.path`
   fill: none;
-  stroke: var(--color-foreground);
+  stroke: hsl(0, 0%, 0%);
   stroke-width: var(--chart-divider-width);
   stroke-linecap: round;
 `
 const ChartDividerX = styled.path<{isFuture: boolean}>`
   fill: none;
-  stroke: hsla(var(--color-hue-primary), ${props => props.isFuture ? "100%" : "0%"}, 40%, 1);
+  stroke: hsla(var(--color-hue), ${props => props.isFuture ? "100%" : "0%"}, 40%, 1);
   stroke-width: var(--chart-divider-width);
   stroke-linecap: round;
 `
 
 const Price = styled.text`
-  fill: var(--color-foreground);
+  fill: hsl(0, 0%, 0%);
   text-anchor: end;
   font-size: 0.006em;
 `
 
 const DateHour = styled.text`
-  fill: var(--color-foreground);
+  fill: hsl(0, 0%, 0%);
   text-anchor: middle;
   font-size: 0.006em;
 `
 
 const DateWeekday = styled.text`
-  fill: var(--color-foreground);
+  fill: hsl(0, 0%, 0%);
   text-anchor: start;
   font-size: 0.006em;
 `
@@ -166,7 +166,7 @@ const ColumnText = styled.text<{isFuture: boolean}>`
   font-size: 0.006em;
   text-anchor: middle;
   font-weight: 500;
-  fill: hsl(var(--color-hue-primary), ${props => props.isFuture ? "100%" : "0%"}, 30%);
+  fill: hsl(var(--color-hue), ${props => props.isFuture ? "100%" : "0%"}, 30%);
 `
 
 const Stepcurve = styled.path`
@@ -177,7 +177,7 @@ const Stepcurve = styled.path`
 
 const Baseline = styled.path`
   fill: none;
-  stroke: var(--color-foreground);
+  stroke: hsl(0, 0%, 0%);
   stroke-width: var(--chart-border-width);
   stroke-linecap: round;
 `

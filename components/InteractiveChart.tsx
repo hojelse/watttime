@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DateAxis } from "./DateAxis";
 import { DataEntries } from "../pages";
 import { PriceAxis } from "./PriceAxis";
+import styled from "styled-components";
 
 export type ChartSettings = {
   width?: number,
@@ -107,94 +108,122 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
   }, [currTime]);
 
   return (<>
-    <h3 style={{ color: "hsl(0, 0%, 0%)" }}>{myFormat(highlightTime ?? currTime)}</h3>
-    <h1 style={{ color: "hsl(0, 0%, 0%)"}}>ØRE {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}</h1>
+    <h3 style={{ color: "var(--color-text-2)" }}>{myFormat(highlightTime ?? currTime)}</h3>
+    <h1 style={{ color: "var(--color-text)"}}>ØRE {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}</h1>
+    <div style={{
+        width: "100vw",
+        height: "100vw",
+        maxHeight: "100vh",
+        backgroundColor: "var(--color-background-2)",
+      }}>
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          backgroundColor: "var(--color-background-3)",
+          touchAction: "none"
+        }}
+        ref={ref}
+      >
+        <svg width={dms.width} height={dms.height}>
+          <defs>
+              <clipPath id="clipPath">
+                  <rect x={0} y={0} width={dms.boundedWidth} height={dms.boundedHeight} />
+              </clipPath>
+          </defs>
+          <g
+            transform={`translate(${[
+              dms.marginLeft,
+              dms.marginTop
+            ].join(",")})`}
+            clipPath="url(#clipPath)"
+          >
+            <rect
+              ref={boundArea}
+              width={dms.boundedWidth}
+              height={dms.boundedHeight}
+              fill="var(--color-background-4)"
+            />
+            <MinText xScale={xScale} yScale={yScale} minPriceItem={minPriceItem} />
+            <MaxText xScale={xScale} yScale={yScale} maxPriceItem={maxPriceItem} />
+            <StepCurve xScale={xScale} yScale={yScale} data={data} />
+            <line
+              stroke="var(--color-text)"
+              x1={highlightOffset ?? currOffset} y1={0}
+              x2={highlightOffset ?? currOffset} y2={dms.boundedHeight}
+              strokeDasharray="10 5"
+              strokeWidth={1}
+            />
+            <circle
+              cx={highlightOffset ?? currOffset}
+              cy={yScale(findPrice(data, highlightTime ?? currTime) ?? 0)}
+              r={5}
+              stroke="var(--color-text)"
+              strokeWidth={2}
+              fill="var(--color-background-4)"
+            />
+          </g>
+          <XAxis xScale={xScale} dms={dms} />
+          <YAxis yScale={yScale} dms={dms} />
+        </svg>
+      </div>
+    </div>
     <div
       style={{
-        height: "100%",
-        width: "100%",
-        backgroundColor: "hsl(0, 0%, 97%)",
-        touchAction: "none"
+        display: "flex",
+        justifyContent: "space-around"
       }}
-      ref={ref}
     >
-      <svg width={dms.width} height={dms.height}>
-        <defs>
-            <clipPath id="clipPath">
-                <rect x={0} y={0} width={dms.boundedWidth} height={dms.boundedHeight} />
-            </clipPath>
-        </defs>
-        <g
-          transform={`translate(${[
-            dms.marginLeft,
-            dms.marginTop
-          ].join(",")})`}
-          clipPath="url(#clipPath)"
-        >
-          <rect
-            ref={boundArea}
-            width={dms.boundedWidth}
-            height={dms.boundedHeight}
-            fill="hsl(0, 0%, 95%)"
-          />
-          <MinText xScale={xScale} yScale={yScale} minPriceItem={minPriceItem} />
-          <MaxText xScale={xScale} yScale={yScale} maxPriceItem={maxPriceItem} />
-          <StepCurve xScale={xScale} yScale={yScale} data={data} />
-          <line
-            stroke="hsl(0, 0%, 0%)"
-            x1={highlightOffset ?? currOffset} y1={0}
-            x2={highlightOffset ?? currOffset} y2={dms.boundedHeight}
-            strokeDasharray="10 5"
-            strokeWidth={1}
-          />
-          <circle
-            cx={highlightOffset ?? currOffset}
-            cy={yScale(findPrice(data, highlightTime ?? currTime) ?? 0)}
-            r={5}
-            stroke="black"
-            strokeWidth={2}
-            fill="hsl(0, 0%, 100%)"
-          />
-        </g>
-        <XAxis xScale={xScale} dms={dms} />
-        <YAxis yScale={yScale} dms={dms} />
-      </svg>
+      <input
+        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+        type="radio"
+        name="timeScale"
+        id="timeScale-36H"
+        value={36}
+        checked={numHoursShown === 36}
+        onChange={e => setNumHoursShown(36)}
+      />
+      <StyledRadioLabel style={{ color: "var(--color-text)"}} htmlFor="timeScale-36H">36H</StyledRadioLabel>
+      <input
+        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+        type="radio"
+        name="timeScale"
+        id="timeScale-48H"
+        value={48}
+        checked={numHoursShown === 48}
+        onChange={e => setNumHoursShown(48)}
+      />
+      <StyledRadioLabel style={{ color: "var(--color-text)"}} htmlFor="timeScale-48H">48H</StyledRadioLabel>
+      <input
+        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+        type="radio"
+        name="timeScale"
+        id="timeScale-1W"
+        value={24*7}
+        checked={numHoursShown === 24*7}
+        onChange={e => setNumHoursShown(24*7)}
+      />
+      <StyledRadioLabel style={{ color: "var(--color-text)"}} htmlFor="timeScale-1W">1W</StyledRadioLabel>
+      <input
+        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+        type="radio"
+        name="timeScale"
+        id="timeScale-1M"
+        value={24*30}
+        checked={numHoursShown === 24*30}
+        onChange={e => setNumHoursShown(24*30)}
+      />
+      <StyledRadioLabel style={{ color: "var(--color-text)"}} htmlFor="timeScale-1M">1M</StyledRadioLabel>
     </div>
-    <input
-      type="radio"
-      name="timeScale"
-      id="timeScale-36H"
-      value={36}
-      checked={numHoursShown === 36}
-      onChange={e => setNumHoursShown(36)}
-    />
-    <label htmlFor="timeScale-36H">36H</label>
-    <input type="radio"
-      name="timeScale"
-      id="timeScale-48H"
-      value={48}
-      checked={numHoursShown === 48}
-      onChange={e => setNumHoursShown(48)}
-    />
-    <label htmlFor="timeScale-48H">48H</label>
-    <input type="radio"
-      name="timeScale"
-      id="timeScale-1W"
-      value={24*7}
-      checked={numHoursShown === 24*7}
-      onChange={e => setNumHoursShown(24*7)}
-    />
-    <label htmlFor="timeScale-1W">1W</label>
-    <input type="radio"
-      name="timeScale"
-      id="timeScale-1M"
-      value={24*30}
-      checked={numHoursShown === 24*30}
-      onChange={e => setNumHoursShown(24*30)}
-    />
-    <label htmlFor="timeScale-1M">1M</label>
   </>)
 }
+
+const StyledRadioLabel = styled.label`
+  background-color: var(--color-background-hue);
+  border-radius: 1000px;
+  margin-top: 1em;
+  padding: 0.1em 0.7em;
+`
 
 function findPrice(
   data: DataEntries,
@@ -255,7 +284,7 @@ function MinText({ xScale, yScale, minPriceItem }: { xScale: TypeXScale, minPric
         fontSize: "1rem",
         textAnchor: "middle",
         dominantBaseline: "hanging",
-        fill: "hsl(0, 0%, 0%)"
+        fill: "var(--color-text-2)"
       }}
       x={xScale(minPriceItem.date)}
       y={yScale(minPriceItem.price)}
@@ -271,7 +300,7 @@ function MaxText({ xScale, yScale, maxPriceItem }: { xScale: TypeXScale, maxPric
       transform: "translateY(-20px)",
       fontSize: "1rem",
       textAnchor: "middle",
-      fill: "hsl(0, 0%, 0%)"
+      fill: "var(--color-text-2)"
     }}
     x={xScale(maxPriceItem.date)}
     y={yScale(maxPriceItem.price)}
@@ -326,7 +355,8 @@ function StepCurve({ data, xScale, yScale }: { data: Data, xScale: TypeXScale, y
     <path
       d={stepCurve}
       fill="none"
-      stroke="hsl(0, 0%, 0%)"
+      stroke="var(--color-background-hue)"
+      // stroke="var(--color-text)"
       strokeWidth={2}
       strokeLinecap="round"
     />

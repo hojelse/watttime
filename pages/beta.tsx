@@ -1,4 +1,5 @@
 import { NextPage } from "next/types"
+import styled from "styled-components"
 import { Data, tranformPrice } from "."
 import { InterativeChart } from "../components/InteractiveChart"
 
@@ -22,18 +23,24 @@ const Beta: NextPage<Data> = ({ data }) => {
 
   return (
     <>
-      <div style={{
-        width: "100vw",
-        height: "100vw",
-        maxHeight: "80vh",
-        padding: "10px",
-        backgroundColor: "hsl(240, 0%, 100%)",
+      <Page style={{
+        height: "100%",
+        minHeight: "100vh",
+        width: "100%",
+        paddingTop: "2em",
+        backgroundColor: "var(--color-background)",
       }}>
         <InterativeChart data={pricesTransformed}/>
-      </div>
+      </Page>
     </>
   )
 }
+
+const Page = styled.div`
+  & > * {
+    padding: 0 10px
+  }
+`
 
 export async function getStaticProps() {
   const hourCount = 24*30

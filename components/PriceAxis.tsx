@@ -34,15 +34,16 @@ export const PriceAxis = ({ dms, domain, range }: ArgType) => {
           <line
             x1={-dms.boundedWidth}
             x2="6"
-            stroke="hsla(0, 0%, 0%, 0.1)"
+            stroke="var(--color-text-3)"
           />
           <text
             key={value}
+            fill="var(--color-text-2)"
             style={{
               fontSize: "10px",
               textAnchor: "middle",
               dominantBaseline: "central",
-              transform: "translateX(20px)"
+              transform: "translateX(20px)",
             }}>
             { value }
           </text>

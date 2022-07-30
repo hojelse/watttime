@@ -1,9 +1,18 @@
 :root {
   --chart-border-width: 0.02;
   --chart-divider-width: 0.002;
-  --color-hue-primary: 190;
-  --color-foreground: hsl(0, 0%, 30%);
-  --color-background: hsl(0, 0%, 100%);
+  --color-hue: 210;
+  --color-foreground: hsl(0, 0%, 100%);
+  --color-foreground-hue: hsl(210, 100%, 70%);
+  
+  --color-text: hsl(0, 0%, 86%);
+  --color-text-2: hsl(0, 0%, 100%, 0.3);
+  --color-text-3: hsla(0, 0%, 100%, 0.05);
+  --color-background-hue: hsl(210, 100%, 30%);
+  --color-background-4: hsl(0, 0%, 5%);
+  --color-background-3: hsl(0, 0%, 5%);
+  --color-background-2: hsl(0, 0%, 5%);
+  --color-background: hsl(0, 0%, 5%);
 }
 
 html,

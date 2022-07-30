@@ -37,10 +37,11 @@ export const DateAxis = ({ dms, domain, range }: ArgType) => {
           <line
             y1={-dms.boundedHeight}
             y2="6"
-            stroke="hsla(0, 0%, 0%, 0.1)"
+            stroke="var(--color-text-3)"
           />
           <text
             key={value.toISOString()}
+            fill="var(--color-text-2)"
             style={{
               fontSize: "10px",
               textAnchor: "middle",
