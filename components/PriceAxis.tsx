@@ -22,7 +22,7 @@ export const PriceAxis = ({ dms, domain, range }: ArgType) => {
         value,
         yOffset: yScale(value)
       }))
-  }, [domain.join("-"), range.join("-")])
+  }, [domain, range])
 
   return (
     <g>

@@ -65,13 +65,13 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
     d3.scaleLinear()
     .domain([Math.ceil(maxPrice/100)*100, Math.floor(minPrice/100)*100])
     .range([boundPadding, -boundPadding + dms.boundedHeight])
-  ), [shownData, dms.marginTop, dms.boundedHeight])
+  ), [maxPrice, minPrice, dms])
 
   const xScale = useMemo(() => (
     d3.scaleTime()
     .domain([beginDate, addHours(1, maxDate)])
     .range([0, dms.boundedWidth])
-  ), [shownData, beginDate, dms.boundedWidth])
+  ), [maxDate, beginDate, dms])
 
   const [highlightOffset, setHighlightOffset] = useState<number | undefined>(undefined)
   const highlightTime = (highlightOffset) ? xScale.invert(highlightOffset) : undefined
@@ -292,17 +292,17 @@ function StepGradient({ data, xScale, yScale }: { data: Data, xScale: TypeXScale
       />
       <defs>
         <linearGradient id="Gradient1">
-          <stop offset="0%"   stop-color="hsl(250,72%,27%)" />
-          <stop offset="20%"  stop-color="hsl(252,75%,32%)" />
-          <stop offset="30%"  stop-color="hsl(260,89%,40%)" />
-          <stop offset="50%"  stop-color="hsl(277,85%,45%)" />
-          <stop offset="70%"  stop-color="hsl(294,75%,45%)" />
-          <stop offset="80%"  stop-color="hsl(327,55%,62%)" />
-          <stop offset="100%" stop-color="hsl(307,41%,68%)" />
+          <stop offset="0%"   stopColor="hsl(250,72%,27%)" />
+          <stop offset="20%"  stopColor="hsl(252,75%,32%)" />
+          <stop offset="30%"  stopColor="hsl(260,89%,40%)" />
+          <stop offset="50%"  stopColor="hsl(277,85%,45%)" />
+          <stop offset="70%"  stopColor="hsl(294,75%,45%)" />
+          <stop offset="80%"  stopColor="hsl(327,55%,62%)" />
+          <stop offset="100%" stopColor="hsl(307,41%,68%)" />
         </linearGradient>
         <linearGradient id="fadeGrad" y2="1" x2="0">
-          <stop offset="0%" stop-color="white" stop-opacity="1"/>
-          <stop offset="100%" stop-color="white" stop-opacity="0"/>
+          <stop offset="0%" stopColor="white" stopOpacity="1"/>
+          <stop offset="100%" stopColor="white" stopOpacity="0"/>
         </linearGradient>
         <mask id="fade" maskContentUnits="objectBoundingBox">
           <rect width="1" height="1" fill="url(#fadeGrad)"/>

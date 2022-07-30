@@ -23,8 +23,8 @@ export const DateAxis = ({ dms, domain, range }: ArgType) => {
         xOffset: xScale(value)
       }))
   }, [
-    domain.map(x => x.toISOString()).join("-"),
-    range.join("-")
+    domain,
+    range
   ])
 
   return (

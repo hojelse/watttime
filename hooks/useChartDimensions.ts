@@ -25,10 +25,8 @@ export const useChartDimensions = (passedSettings: ChartSettings) : [RefObject<H
       height: passedSettings.height ?? height
     }
   )
-  useEffect(() => {
-      if (dimensions.width && dimensions.height)
-        return [ref, dimensions]
 
+  useEffect(() => {
       const element = ref.current as Element
 
       const resizeObserver = new ResizeObserver(
@@ -44,7 +42,11 @@ export const useChartDimensions = (passedSettings: ChartSettings) : [RefObject<H
       )
       resizeObserver.observe(element)
       return () => resizeObserver.unobserve(element)
-  }, [])
+  }, [dimensions, height, width])
+
+  if (dimensions.width && dimensions.height)
+    return [ref, dimensions]
+
   const newSettings = combineChartDimensions({
       ...dimensions,
       width: dimensions.width ?? width,

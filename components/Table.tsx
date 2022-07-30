@@ -7,7 +7,7 @@ export function Table({ data }: { data: DataEntries }) {
 
   useEffect(() => {
     setDataset(data)
-  }, [])
+  }, [data])
 
   if (dataset == undefined)
     return null
