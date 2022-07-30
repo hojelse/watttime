@@ -117,7 +117,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
       ref={ref}
     >
       <svg width={dms.width} height={dms.height}>
-        <svg
+        <g
           ref={boundArea}
           width={dms.boundedWidth}
           height={dms.boundedHeight}
@@ -149,7 +149,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
             strokeWidth={2}
             fill="hsl(0, 0%, 100%)"
           />
-        </svg>
+        </g>
         <XAxis xScale={xScale} dms={dms} />
         <YAxis yScale={yScale} dms={dms} />
       </svg>
