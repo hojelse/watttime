@@ -48,12 +48,14 @@ export function Chart({ data }: { data: DataEntries }) {
     <Canvas viewBox={`-0.5 -0.5 ${X(XMAX)+1} ${Y(YMAX)+1}`} >
       {
         yaxis.map(y => {
-          return <>
-              <Price x={0} y={BASELINE-Y(y)} dominant-baseline="central" dx="-0.2" >
-                {`${y}`}
-              </Price>
-              <ChartDividerY d={`M 0 ${BASELINE-Y(y)} l ${X(XMAX+1)} 0`} />
-          </>
+          return (y % 100 == 0)
+          ? (<>
+            <Price x={0} y={BASELINE-Y(y)} dominant-baseline="central" dx="-0.2" >
+              {`${y}`}
+            </Price>
+            <ChartDividerY d={`M 0 ${BASELINE-Y(y)} l ${X(XMAX+1)} 0`} />
+          </>)
+          : null
         })
       }
       {

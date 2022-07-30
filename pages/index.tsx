@@ -9,7 +9,7 @@ export type DataEntries = {
   isFuture: boolean
 }[]
 
-type Data = {
+export type Data = {
   data: {
     dataset: string,
     records: {
@@ -42,23 +42,14 @@ const Home: NextPage<Data> = ({ data }) => {
 
   return (
     <>
-      <div style={{
-        width: "100vw",
-        height: "100vw",
-        maxHeight: "80vh",
-        padding: "10px",
-        backgroundColor: "hsl(240, 0%, 100%)",
-      }}>
-        <InterativeChart data={pricesTransformed}/>
-      </div>
-      {/* <Chart data={pricesTransformed}/> */}
+      <Chart data={pricesTransformed}/>
       {/* <p>Time of last data fetch: {lastFetchTime != undefined ? lastFetchTime.toUTCString() : "No data yet"}</p> */}
-      {/* <Table data={pricesTransformed}/> */}
+      <Table data={pricesTransformed}/>
     </>
   )
 }
 
-function tranformPrice(SpotPriceEUR: any) {
+export function tranformPrice(SpotPriceEUR: any) {
   const priceEur = SpotPriceEUR as number
   const moms = 1.25
   const eurToDkk = 7.5
