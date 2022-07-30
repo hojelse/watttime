@@ -108,7 +108,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
   }, [currTime]);
 
   return (<>
-    <h3 style={{ color: "var(--color-text-2)" }}>{myFormat(highlightTime ?? currTime)}</h3>
+    <h4 style={{ color: "var(--color-text-2)", marginBottom: "0" }}>{myFormat(highlightTime ?? currTime)}</h4>
     <h1 style={{ color: "var(--color-text)"}}>ØRE {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}</h1>
     <div style={{
         width: "100vw",
@@ -183,7 +183,12 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
         checked={numHoursShown === 36}
         onChange={e => setNumHoursShown(36)}
       />
-      <StyledRadioLabel style={{ color: "var(--color-text)"}} htmlFor="timeScale-36H">36H</StyledRadioLabel>
+      <StyledRadioLabel
+        style={{
+          backgroundColor: `${(numHoursShown === 36) ? "var(--color-background-hue)" : "inherit"}`,
+          color: `${(numHoursShown === 36) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+        }}
+        selected={numHoursShown === 36} htmlFor="timeScale-36H">36H</StyledRadioLabel>
       <input
         style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
         type="radio"
@@ -193,7 +198,12 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
         checked={numHoursShown === 48}
         onChange={e => setNumHoursShown(48)}
       />
-      <StyledRadioLabel style={{ color: "var(--color-text)"}} htmlFor="timeScale-48H">48H</StyledRadioLabel>
+      <StyledRadioLabel
+        style={{
+          backgroundColor: `${(numHoursShown === 48) ? "var(--color-background-hue)" : "inherit"}`,
+          color: `${(numHoursShown === 48) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+        }}
+        selected={numHoursShown === 48} htmlFor="timeScale-48H">48H</StyledRadioLabel>
       <input
         style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
         type="radio"
@@ -203,7 +213,12 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
         checked={numHoursShown === 24*7}
         onChange={e => setNumHoursShown(24*7)}
       />
-      <StyledRadioLabel style={{ color: "var(--color-text)"}} htmlFor="timeScale-1W">1W</StyledRadioLabel>
+      <StyledRadioLabel
+        style={{
+          backgroundColor: `${(numHoursShown === 24*7) ? "var(--color-background-hue)" : "inherit"}`,
+          color: `${(numHoursShown === 24*7) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+        }}
+        selected={numHoursShown === 24*7} htmlFor="timeScale-1W">1W</StyledRadioLabel>
       <input
         style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
         type="radio"
@@ -213,16 +228,22 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
         checked={numHoursShown === 24*30}
         onChange={e => setNumHoursShown(24*30)}
       />
-      <StyledRadioLabel style={{ color: "var(--color-text)"}} htmlFor="timeScale-1M">1M</StyledRadioLabel>
+      <StyledRadioLabel
+        style={{
+          backgroundColor: `${(numHoursShown === 24*30) ? "var(--color-background-hue)" : "inherit"}`,
+          color: `${(numHoursShown === 24*30) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+        }}
+        selected={numHoursShown === 24*30} htmlFor="timeScale-1M">1M</StyledRadioLabel>
     </div>
   </>)
 }
 
-const StyledRadioLabel = styled.label`
-  background-color: var(--color-background-hue);
+const StyledRadioLabel = styled.label<{selected: boolean}>`
+  background-color: ${selected => selected ? "var(--color-background-hue)" : "var(--color-background)"};
   border-radius: 1000px;
   margin-top: 1em;
   padding: 0.1em 0.7em;
+  color: ${selected => selected ? "var(--color-foreground-hue)" : "var(--color-text-2)"};
 `
 
 function findPrice(
@@ -355,8 +376,7 @@ function StepCurve({ data, xScale, yScale }: { data: Data, xScale: TypeXScale, y
     <path
       d={stepCurve}
       fill="none"
-      stroke="var(--color-background-hue)"
-      // stroke="var(--color-text)"
+      stroke="var(--color-foreground-hue)"
       strokeWidth={2}
       strokeLinecap="round"
     />
