@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import { Table } from '../components/Table'
 import { Chart } from '../components/Chart'
+import { InterativeChart } from '../components/InteractiveChart'
 
 export type DataEntries = {
   date: Date
@@ -41,9 +42,18 @@ const Home: NextPage<Data> = ({ data }) => {
 
   return (
     <>
-      <Chart data={pricesTransformed}/>
+      <div style={{
+        width: "100vw",
+        height: "100vw",
+        maxHeight: "80vh",
+        padding: "10px",
+        backgroundColor: "hsl(240, 0%, 100%)",
+      }}>
+        <InterativeChart data={pricesTransformed}/>
+      </div>
+      {/* <Chart data={pricesTransformed}/> */}
       {/* <p>Time of last data fetch: {lastFetchTime != undefined ? lastFetchTime.toUTCString() : "No data yet"}</p> */}
-      <Table data={pricesTransformed}/>
+      {/* <Table data={pricesTransformed}/> */}
     </>
   )
 }
@@ -53,13 +63,14 @@ function tranformPrice(SpotPriceEUR: any) {
   const moms = 1.25
   const eurToDkk = 7.5
   const mwtToKwt = 0.001
-  const price = priceEur * moms * eurToDkk * mwtToKwt
+  const price = priceEur * moms * eurToDkk * mwtToKwt * 100
   return price
 }
 
 
 export async function getStaticProps() {
-  const res = await fetch(`https://api.energidataservice.dk/dataset/Elspotprices?limit=48&offset=0&sort=HourUTC DESC&timezone=utc+1&filter={"PriceArea":"DK2"}`)
+  const hourCount = 24*30
+  const res = await fetch(`https://api.energidataservice.dk/dataset/Elspotprices?limit=${hourCount}&offset=0&sort=HourUTC DESC&timezone=utc+1&filter={"PriceArea":"DK2"}`)
   const data = await res.json()
 
   return {

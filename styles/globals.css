@@ -22,3 +22,9 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.Chart__wrapper {
+  width: 100vw;
+  height: 100vw;
+  max-height: 90vh;
+}
