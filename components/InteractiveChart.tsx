@@ -15,10 +15,10 @@ export type ChartSettings = {
 }
 
 const chartSettings: ChartSettings = {
-  marginLeft: 30,
+  marginLeft: 10,
   marginRight: 30,
   marginTop: 10,
-  marginBottom: 20
+  marginBottom: 30
 }
 
 function myFormat(date: Date) {
