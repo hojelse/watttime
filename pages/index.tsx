@@ -58,7 +58,6 @@ export function tranformPrice(SpotPriceEUR: any) {
   return price
 }
 
-
 export async function getStaticProps() {
   const hourCount = 24*30
   const res = await fetch(`https://api.energidataservice.dk/dataset/Elspotprices?limit=${hourCount}&offset=0&sort=HourUTC DESC&timezone=utc+1&filter={"PriceArea":"DK2"}`)

@@ -23,24 +23,22 @@ const Beta: NextPage<Data> = ({ data }) => {
 
   return (
     <>
-      <Page style={{
-        height: "100%",
-        minHeight: "100vh",
-        width: "100%",
-        paddingTop: "2em",
-        backgroundColor: "var(--color-background)",
-      }}>
+      <div
+        className="page"
+        style={{
+          height: "100dvh",
+          width: "100%",
+          padding: "3em 0",
+          backgroundColor: "var(--color-background)",
+          display: "grid",
+          gridTemplateRows: "auto auto 1fr auto"
+        }}
+      >
         <InterativeChart data={pricesTransformed}/>
-      </Page>
+      </div>
     </>
   )
 }
-
-const Page = styled.div`
-  & > * {
-    padding: 0 10px
-  }
-`
 
 export async function getStaticProps() {
   const hourCount = 24*30

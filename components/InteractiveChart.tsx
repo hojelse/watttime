@@ -112,8 +112,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
     <h1 style={{ color: "var(--color-text)"}}>ØRE {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}</h1>
     <div style={{
         width: "100vw",
-        height: "100vw",
-        maxHeight: "100vh",
+        minHeight: "0",
         backgroundColor: "var(--color-background-2)",
       }}>
       <div

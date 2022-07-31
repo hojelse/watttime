@@ -37,3 +37,12 @@ a {
   height: 100vw;
   max-height: 90vh;
 }
+
+.page {
+  height: 90vh;
+  height: 100dvh;
+}
+
+.page > * {
+  padding: 0 10px
+}
