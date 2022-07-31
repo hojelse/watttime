@@ -1,7 +1,7 @@
 {
   "name": "elpris i danmark",
   "short_name": "elpris",
-  "theme_color": "hsl(210, 100%, 40%)",
+  "theme_color": "hsl(0, 0%, 5%)",
   "background_color": "hsl(0, 0%, 5%)",
   "display": "standalone",
   "orientation": "portrait",
