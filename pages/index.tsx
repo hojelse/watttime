@@ -42,9 +42,19 @@ const Home: NextPage<Data> = ({ data }) => {
 
   return (
     <>
-      <Chart data={pricesTransformed}/>
-      {/* <p>Time of last data fetch: {lastFetchTime != undefined ? lastFetchTime.toUTCString() : "No data yet"}</p> */}
-      <Table data={pricesTransformed}/>
+      <div
+        className="page"
+        style={{
+          width: "100%",
+          padding: "3em 0",
+          backgroundColor: "var(--color-background)",
+          display: "grid",
+          gridTemplateRows: "auto auto 1fr auto"
+        }}
+      >
+        <InterativeChart data={pricesTransformed}/>
+      </div>
+     
     </>
   )
 }
