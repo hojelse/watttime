@@ -3,7 +3,7 @@
 Chart of electricity prices in east Denmark.
 
 <p align="center">
-  <img src="elpris-screenshot.png" alt="elpris-screenshot.png" width="400"/>
+  <img src="app-screenshot.png" alt="app-screenshot.png" height="700"/>
 </p>
 
 See the deployment at [https://elpris-hojelse.vercel.app](https://elpris-hojelse.vercel.app)
