@@ -1,6 +1,8 @@
 # Elpris
 
-Chart of electricity prices in east Denmark
+Chart of electricity prices in east Denmark.
+
+See the deployment at [https://elpris-hojelse.vercel.app](https://elpris-hojelse.vercel.app)
 
 ## Development
 
