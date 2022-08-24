@@ -32,8 +32,8 @@ export const PriceAxis = ({ dms, domain, range }: ArgType) => {
           transform={`translate(0, ${yOffset})`}
         >
           <line
-            x1={-dms.boundedWidth}
-            x2="6"
+            x1={-6}
+            x2={dms.boundedWidth}
             stroke="var(--color-text-3)"
           />
           <text
@@ -43,7 +43,7 @@ export const PriceAxis = ({ dms, domain, range }: ArgType) => {
               fontSize: "10px",
               textAnchor: "middle",
               dominantBaseline: "central",
-              transform: "translateX(20px)",
+              transform: "translateX(-20px)",
             }}>
             { value }
           </text>

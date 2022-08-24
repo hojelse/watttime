@@ -16,8 +16,8 @@ export type ChartSettings = {
 }
 
 const chartSettings: ChartSettings = {
-  marginLeft: 10,
-  marginRight: 30,
+  marginLeft: 30,
+  marginRight: 10,
   marginTop: 30,
   marginBottom: 10
 }
@@ -285,7 +285,7 @@ function XAxis({dms, xScale}: {dms: NewChartSettings, xScale: TypeXScale}) {
 function YAxis({dms, yScale}: {dms: NewChartSettings, yScale: TypeYScale}) {
   return (
     <g transform={`translate(${[
-      dms.marginLeft + dms.boundedWidth,
+      dms.marginLeft,
       dms.marginTop
     ].join(",")})`}>
       <PriceAxis
