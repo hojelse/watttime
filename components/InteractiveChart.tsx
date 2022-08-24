@@ -18,8 +18,8 @@ export type ChartSettings = {
 const chartSettings: ChartSettings = {
   marginLeft: 10,
   marginRight: 30,
-  marginTop: 10,
-  marginBottom: 30
+  marginTop: 30,
+  marginBottom: 10
 }
 
 function myFormat(date: Date) {
@@ -272,7 +272,7 @@ function XAxis({dms, xScale}: {dms: NewChartSettings, xScale: TypeXScale}) {
   return (
     <g transform={`translate(${[
       dms.marginLeft,
-      dms.marginTop + dms.boundedHeight,
+      dms.marginTop,
     ].join(",")})`}>
       <DateAxis
         dms={dms}

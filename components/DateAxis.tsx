@@ -35,8 +35,8 @@ export const DateAxis = ({ dms, domain, range }: ArgType) => {
           transform={`translate(${xOffset}, 0)`}
         >
           <line
-            y1={-dms.boundedHeight}
-            y2="6"
+            y1={0}
+            y2={dms.boundedHeight}
             stroke="var(--color-text-3)"
           />
           <text
@@ -45,7 +45,7 @@ export const DateAxis = ({ dms, domain, range }: ArgType) => {
             style={{
               fontSize: "10px",
               textAnchor: "middle",
-              transform: "translateY(20px)"
+              transform: "translateY(-20px)"
             }}>
             { hourFormat(value) || 24 }
           </text>
