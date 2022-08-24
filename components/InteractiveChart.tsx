@@ -177,32 +177,20 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
         style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
         type="radio"
         name="timeScale"
-        id="timeScale-36H"
-        value={36}
-        checked={numHoursShown === 36}
-        onChange={e => setNumHoursShown(36)}
+        id="timeScale-1M"
+        value={24*30}
+        checked={numHoursShown === 24*30}
+        onChange={e => setNumHoursShown(24*30)}
       />
       <StyledRadioLabel
         style={{
-          backgroundColor: `${(numHoursShown === 36) ? "var(--color-background-hue)" : "inherit"}`,
-          color: `${(numHoursShown === 36) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+          backgroundColor: `${(numHoursShown === 24*30) ? "var(--color-background-hue)" : "inherit"}`,
+          color: `${(numHoursShown === 24*30) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
         }}
-        selected={numHoursShown === 36} htmlFor="timeScale-36H">36H</StyledRadioLabel>
-      <input
-        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-        type="radio"
-        name="timeScale"
-        id="timeScale-48H"
-        value={48}
-        checked={numHoursShown === 48}
-        onChange={e => setNumHoursShown(48)}
-      />
-      <StyledRadioLabel
-        style={{
-          backgroundColor: `${(numHoursShown === 48) ? "var(--color-background-hue)" : "inherit"}`,
-          color: `${(numHoursShown === 48) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
-        }}
-        selected={numHoursShown === 48} htmlFor="timeScale-48H">48H</StyledRadioLabel>
+        selected={numHoursShown === 24*30} htmlFor="timeScale-1M"
+      >
+        1M
+      </StyledRadioLabel>
       <input
         style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
         type="radio"
@@ -217,22 +205,46 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
           backgroundColor: `${(numHoursShown === 24*7) ? "var(--color-background-hue)" : "inherit"}`,
           color: `${(numHoursShown === 24*7) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
         }}
-        selected={numHoursShown === 24*7} htmlFor="timeScale-1W">1W</StyledRadioLabel>
+        selected={numHoursShown === 24*7} htmlFor="timeScale-1W"
+      >
+        1W
+      </StyledRadioLabel>
       <input
         style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
         type="radio"
         name="timeScale"
-        id="timeScale-1M"
-        value={24*30}
-        checked={numHoursShown === 24*30}
-        onChange={e => setNumHoursShown(24*30)}
+        id="timeScale-48H"
+        value={48}
+        checked={numHoursShown === 48}
+        onChange={e => setNumHoursShown(48)}
       />
       <StyledRadioLabel
         style={{
-          backgroundColor: `${(numHoursShown === 24*30) ? "var(--color-background-hue)" : "inherit"}`,
-          color: `${(numHoursShown === 24*30) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+          backgroundColor: `${(numHoursShown === 48) ? "var(--color-background-hue)" : "inherit"}`,
+          color: `${(numHoursShown === 48) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
         }}
-        selected={numHoursShown === 24*30} htmlFor="timeScale-1M">1M</StyledRadioLabel>
+        selected={numHoursShown === 48} htmlFor="timeScale-48H"
+      >
+        48H
+      </StyledRadioLabel>
+      <input
+        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+        type="radio"
+        name="timeScale"
+        id="timeScale-36H"
+        value={36}
+        checked={numHoursShown === 36}
+        onChange={e => setNumHoursShown(36)}
+      />
+      <StyledRadioLabel
+        style={{
+          backgroundColor: `${(numHoursShown === 36) ? "var(--color-background-hue)" : "inherit"}`,
+          color: `${(numHoursShown === 36) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+        }}
+        selected={numHoursShown === 36} htmlFor="timeScale-36H"
+      >
+        36H
+      </StyledRadioLabel>
     </div>
   </>)
 }
