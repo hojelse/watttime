@@ -152,6 +152,9 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
               x2={highlightOffset ?? currOffset} y2={dms.boundedHeight}
               strokeDasharray="10 5"
               strokeWidth={1}
+              style={{
+                pointerEvents: "none"
+              }}
             />
             <circle
               cx={highlightOffset ?? currOffset}
@@ -160,6 +163,9 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
               stroke="var(--color-text)"
               strokeWidth={2}
               fill="var(--color-background-4)"
+              style={{
+                pointerEvents: "none"
+              }}
             />
           </g>
           <XAxis xScale={xScale} dms={dms} />
@@ -316,7 +322,8 @@ function MinText({ xScale, yScale, minPriceItem }: { xScale: TypeXScale, minPric
         fontSize: "1rem",
         textAnchor: "middle",
         dominantBaseline: "hanging",
-        fill: "var(--color-text-2)"
+        fill: "var(--color-text-2)",
+        pointerEvents: "none"
       }}
       x={xScale(minPriceItem.date)}
       y={yScale(minPriceItem.price)}
@@ -332,7 +339,8 @@ function MaxText({ xScale, yScale, maxPriceItem }: { xScale: TypeXScale, maxPric
       transform: "translateY(-20px)",
       fontSize: "1rem",
       textAnchor: "middle",
-      fill: "var(--color-text-2)"
+      fill: "var(--color-text-2)",
+      pointerEvents: "none"
     }}
     x={xScale(maxPriceItem.date)}
     y={yScale(maxPriceItem.price)}
@@ -390,6 +398,9 @@ function StepCurve({ data, xScale, yScale }: { data: Data, xScale: TypeXScale, y
       stroke="var(--color-foreground-hue)"
       strokeWidth={2}
       strokeLinecap="round"
+      style={{
+        pointerEvents: "none"
+      }}
     />
   )
 }
