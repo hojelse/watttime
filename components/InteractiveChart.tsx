@@ -18,7 +18,7 @@ export type ChartSettings = {
 const chartSettings: ChartSettings = {
   marginLeft: 30,
   marginRight: 10,
-  marginTop: 50,
+  marginTop: 35,
   marginBottom: 10
 }
 
