@@ -18,7 +18,7 @@ export type ChartSettings = {
 const chartSettings: ChartSettings = {
   marginLeft: 30,
   marginRight: 10,
-  marginTop: 30,
+  marginTop: 50,
   marginBottom: 10
 }
 
@@ -27,14 +27,14 @@ function myFormat(date: Date) {
 }
 
 const localeFormat : Intl.DateTimeFormatOptions = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
+  // year: 'numeric',
+  // month: 'long',
+  // day: 'numeric',
+  weekday: "long",
   hour: '2-digit',
   minute: '2-digit',
-  // second: '2-digit',
   hour12: false,
-  timeZoneName: 'short'
+  // timeZoneName: 'short'
 }
 
 export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => {
@@ -288,15 +288,18 @@ type Data = {date: Date, price: number}[]
 
 function XAxis({dms, xScale}: {dms: NewChartSettings, xScale: TypeXScale}) {
   return (
-    <g transform={`translate(${[
-      dms.marginLeft,
-      dms.marginTop,
-    ].join(",")})`}>
-      <DateAxis
-        dms={dms}
-        domain={xScale.domain()}
-        range={xScale.range()} />
-    </g>
+    <>
+      <g transform={`translate(${[
+        dms.marginLeft,
+        dms.marginTop,
+      ].join(",")})`}>
+        <DateAxis
+          dms={dms}
+          domain={xScale.domain()}
+          range={xScale.range()}
+        />
+      </g>
+    </>
   )
 }
 
