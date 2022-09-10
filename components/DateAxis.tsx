@@ -5,16 +5,17 @@ import { NewChartSettings } from "../hooks/useChartDimensions"
 type ArgType = {
   domain: Date[],
   range: number[],
-  dms: NewChartSettings
+  dms: NewChartSettings,
+  numHoursShown: number
 }
 
-export const DateAxis = ({ dms, domain, range }: ArgType) => {
+export const DateAxis = ({ dms, domain, range, numHoursShown }: ArgType) => {
   const ticks = useMemo(() => {
     const xScale = d3.scaleTime()
       .domain(domain)
       .range(range)
     const width = range[1] - range[0]
-    const pixelsPerTick = 35
+    const pixelsPerTick = 30
     const numberOfTicksTarget = Math.max(1, Math.floor(width / pixelsPerTick))
 
     return xScale.ticks(numberOfTicksTarget)
@@ -45,18 +46,38 @@ export const DateAxis = ({ dms, domain, range }: ArgType) => {
           />
 
           {
-            (value.getDate() == 1)
+            (
+              value.getDate() == 1 && // is first day of month
+              numHoursShown >= 7*24+1 // is month view
+            )
             ? MonthText(value)
             : null
           }
 
           {
-            (value.getHours() == 0)
+            (
+              value.getHours() == 0 && // is first hour of day
+              numHoursShown > 7*24 // is month view
+            )
+            ? DayNumberText(value)
+            : null
+          }
+          {
+            (
+              value.getHours() == 0 && // is first hour of day
+              numHoursShown <= 7*24 // isn't month view
+            ) 
             ? WeekDayText(value)
             : null
           }
 
-          {HourText(value)}
+          {
+            (
+              numHoursShown <= 7*24 // isn't month view
+            )
+            ? HourText(value)
+            : null
+          }
         </g>
       ))}
     </g>
@@ -73,7 +94,7 @@ function HourText(value: Date) {
       transform: "translateY(-12px)"
     }}
   >
-    {hourFormat(value)}:
+    {hourFormat(value)}
     {/* &apos; */}
   </text>
 }
@@ -83,6 +104,26 @@ function hourFormat(date: Date) {
     hour: "2-digit",
     // minute: "2-digit",
     hour12: false,
+  })
+}
+
+function DayNumberText(value: Date) {
+  return <text
+    key={"dayNumber-" + value.toISOString()}
+    fill="var(--color-text-2)"
+    style={{
+      fontSize: "10px",
+      textAnchor: "middle",
+      transform: "translateY(-12px)"
+    }}
+  >
+    {dayNumberFormat(value)}
+  </text>
+}
+
+function dayNumberFormat(date: Date) {
+  return date.toLocaleString("en-UK", {
+    day: "numeric"
   })
 }
 
@@ -113,7 +154,7 @@ function MonthText(value: Date) {
     style={{
       fontSize: "10px",
       textAnchor: "middle",
-      transform: "translateY(-36px)"
+      transform: "translateY(-24px)"
     }}
   >
     {monthFormat(value)}
@@ -123,6 +164,5 @@ function MonthText(value: Date) {
 function monthFormat(date: Date) {
   return date.toLocaleString("en-UK", {
     month: "short",
-    day: "numeric"
   })
 }

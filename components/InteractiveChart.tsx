@@ -168,7 +168,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
               }}
             />
           </g>
-          <XAxis xScale={xScale} dms={dms} />
+          <XAxis xScale={xScale} dms={dms} numHoursShown={numHoursShown} />
           <YAxis yScale={yScale} dms={dms} />
         </svg>
       </div>
@@ -286,7 +286,7 @@ type TypeXScale = d3.ScaleTime<number, number, never>
 type TypeYScale = d3.ScaleLinear<number, number, never>
 type Data = {date: Date, price: number}[]
 
-function XAxis({dms, xScale}: {dms: NewChartSettings, xScale: TypeXScale}) {
+function XAxis({dms, xScale, numHoursShown}: {dms: NewChartSettings, xScale: TypeXScale, numHoursShown: number}) {
   return (
     <>
       <g transform={`translate(${[
@@ -297,6 +297,7 @@ function XAxis({dms, xScale}: {dms: NewChartSettings, xScale: TypeXScale}) {
           dms={dms}
           domain={xScale.domain()}
           range={xScale.range()}
+          numHoursShown={numHoursShown}
         />
       </g>
     </>
