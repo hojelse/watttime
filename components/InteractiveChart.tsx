@@ -2,9 +2,14 @@ import { NewChartSettings, useChartDimensions } from "../hooks/useChartDimension
 import * as d3 from "d3";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DateAxis } from "./DateAxis";
-import { DataEntries } from "../pages";
 import { PriceAxis } from "./PriceAxis";
 import styled from "styled-components";
+
+type DataEntries = {
+  date: Date;
+  price: number;
+  rawPrice: number;
+}[]
 
 export type ChartSettings = {
   width?: number,
@@ -107,152 +112,161 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
     };
   }, [currTime]);
 
-  return (<>
-    <h4 style={{ color: "var(--color-text-2)", marginBottom: "0" }}>{myFormat(highlightTime ?? currTime)}</h4>
-    <h1 style={{ color: "var(--color-text)"}}>ØRE {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}</h1>
-    <div style={{
-        width: "100vw",
-        minHeight: "0",
-        backgroundColor: "var(--color-background-2)",
-      }}>
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          backgroundColor: "var(--color-background-3)",
-          touchAction: "none"
-        }}
-        ref={ref}
-      >
-        <svg width={dms.width} height={dms.height}>
-          <defs>
-              <clipPath id="clipPath">
-                  <rect x={0} y={0} width={dms.boundedWidth} height={dms.boundedHeight} />
-              </clipPath>
-          </defs>
-          <g
-            transform={`translate(${[
-              dms.marginLeft,
-              dms.marginTop
-            ].join(",")})`}
-            clipPath="url(#clipPath)"
-          >
-            <rect
-              ref={boundArea}
-              width={dms.boundedWidth}
-              height={dms.boundedHeight}
-              fill="var(--color-background-4)"
-            />
-            <MinText xScale={xScale} yScale={yScale} minPriceItem={minPriceItem} />
-            <MaxText xScale={xScale} yScale={yScale} maxPriceItem={maxPriceItem} />
-            <StepCurve xScale={xScale} yScale={yScale} data={data} />
-            <line
-              stroke="var(--color-text)"
-              x1={highlightOffset ?? currOffset} y1={0}
-              x2={highlightOffset ?? currOffset} y2={dms.boundedHeight}
-              strokeDasharray="10 5"
-              strokeWidth={1}
-              style={{
-                pointerEvents: "none"
-              }}
-            />
-            <circle
-              cx={highlightOffset ?? currOffset}
-              cy={yScale(findPrice(data, highlightTime ?? currTime) ?? 0)}
-              r={5}
-              stroke="var(--color-text)"
-              strokeWidth={2}
-              fill="var(--color-background-4)"
-              style={{
-                pointerEvents: "none"
-              }}
-            />
-          </g>
-          <XAxis xScale={xScale} dms={dms} numHoursShown={numHoursShown} />
-          <YAxis yScale={yScale} dms={dms} />
-        </svg>
-      </div>
-    </div>
+  return (
     <div
       style={{
-        display: "flex",
-        justifyContent: "space-around"
+        display: "grid",
+        gridTemplateRows: "auto auto 1fr auto",
+        height: "100%",
+        width: "100%"
       }}
     >
-      <input
-        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-        type="radio"
-        name="timeScale"
-        id="timeScale-1M"
-        value={24*30}
-        checked={numHoursShown === 24*30}
-        onChange={e => setNumHoursShown(24*30)}
-      />
-      <StyledRadioLabel
+      <h4 style={{ color: "var(--color-text-2)", marginBottom: "0" }}>{myFormat(highlightTime ?? currTime)}</h4>
+      <h1 style={{ color: "var(--color-text)"}}>ØRE {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}</h1>
+      <div style={{
+          width: "100%",
+          minHeight: "0",
+          backgroundColor: "var(--color-background-2)",
+        }}>
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            backgroundColor: "var(--color-background-3)",
+            touchAction: "none"
+          }}
+          ref={ref}
+        >
+          <svg width={dms.width} height={dms.height}>
+            <defs>
+                <clipPath id="clipPath">
+                    <rect x={0} y={0} width={dms.boundedWidth} height={dms.boundedHeight} />
+                </clipPath>
+            </defs>
+            <g
+              transform={`translate(${[
+                dms.marginLeft,
+                dms.marginTop
+              ].join(",")})`}
+              clipPath="url(#clipPath)"
+            >
+              <rect
+                ref={boundArea}
+                width={dms.boundedWidth}
+                height={dms.boundedHeight}
+                fill="var(--color-background-4)"
+              />
+              <MinText xScale={xScale} yScale={yScale} minPriceItem={minPriceItem} />
+              <MaxText xScale={xScale} yScale={yScale} maxPriceItem={maxPriceItem} />
+              <StepCurve xScale={xScale} yScale={yScale} data={data} />
+              <line
+                stroke="var(--color-text)"
+                x1={highlightOffset ?? currOffset} y1={0}
+                x2={highlightOffset ?? currOffset} y2={dms.boundedHeight}
+                strokeDasharray="10 5"
+                strokeWidth={1}
+                style={{
+                  pointerEvents: "none"
+                }}
+              />
+              <circle
+                cx={highlightOffset ?? currOffset}
+                cy={yScale(findPrice(data, highlightTime ?? currTime) ?? 0)}
+                r={5}
+                stroke="var(--color-text)"
+                strokeWidth={2}
+                fill="var(--color-background-4)"
+                style={{
+                  pointerEvents: "none"
+                }}
+              />
+            </g>
+            <XAxis xScale={xScale} dms={dms} numHoursShown={numHoursShown} />
+            <YAxis yScale={yScale} dms={dms} />
+          </svg>
+        </div>
+      </div>
+      <div
         style={{
-          backgroundColor: `${(numHoursShown === 24*30) ? "var(--color-background-hue)" : "inherit"}`,
-          color: `${(numHoursShown === 24*30) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+          display: "flex",
+          justifyContent: "space-around"
         }}
-        selected={numHoursShown === 24*30} htmlFor="timeScale-1M"
       >
-        1M
-      </StyledRadioLabel>
-      <input
-        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-        type="radio"
-        name="timeScale"
-        id="timeScale-1W"
-        value={24*7}
-        checked={numHoursShown === 24*7}
-        onChange={e => setNumHoursShown(24*7)}
-      />
-      <StyledRadioLabel
-        style={{
-          backgroundColor: `${(numHoursShown === 24*7) ? "var(--color-background-hue)" : "inherit"}`,
-          color: `${(numHoursShown === 24*7) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
-        }}
-        selected={numHoursShown === 24*7} htmlFor="timeScale-1W"
-      >
-        1W
-      </StyledRadioLabel>
-      <input
-        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-        type="radio"
-        name="timeScale"
-        id="timeScale-48H"
-        value={48}
-        checked={numHoursShown === 48}
-        onChange={e => setNumHoursShown(48)}
-      />
-      <StyledRadioLabel
-        style={{
-          backgroundColor: `${(numHoursShown === 48) ? "var(--color-background-hue)" : "inherit"}`,
-          color: `${(numHoursShown === 48) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
-        }}
-        selected={numHoursShown === 48} htmlFor="timeScale-48H"
-      >
-        48H
-      </StyledRadioLabel>
-      <input
-        style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-        type="radio"
-        name="timeScale"
-        id="timeScale-36H"
-        value={36}
-        checked={numHoursShown === 36}
-        onChange={e => setNumHoursShown(36)}
-      />
-      <StyledRadioLabel
-        style={{
-          backgroundColor: `${(numHoursShown === 36) ? "var(--color-background-hue)" : "inherit"}`,
-          color: `${(numHoursShown === 36) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
-        }}
-        selected={numHoursShown === 36} htmlFor="timeScale-36H"
-      >
-        36H
-      </StyledRadioLabel>
+        <input
+          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+          type="radio"
+          name="timeScale"
+          id="timeScale-1M"
+          value={24*30}
+          checked={numHoursShown === 24*30}
+          onChange={e => setNumHoursShown(24*30)}
+        />
+        <StyledRadioLabel
+          style={{
+            backgroundColor: `${(numHoursShown === 24*30) ? "var(--color-background-hue)" : "inherit"}`,
+            color: `${(numHoursShown === 24*30) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+          }}
+          selected={numHoursShown === 24*30} htmlFor="timeScale-1M"
+        >
+          1M
+        </StyledRadioLabel>
+        <input
+          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+          type="radio"
+          name="timeScale"
+          id="timeScale-1W"
+          value={24*7}
+          checked={numHoursShown === 24*7}
+          onChange={e => setNumHoursShown(24*7)}
+        />
+        <StyledRadioLabel
+          style={{
+            backgroundColor: `${(numHoursShown === 24*7) ? "var(--color-background-hue)" : "inherit"}`,
+            color: `${(numHoursShown === 24*7) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+          }}
+          selected={numHoursShown === 24*7} htmlFor="timeScale-1W"
+        >
+          1W
+        </StyledRadioLabel>
+        <input
+          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+          type="radio"
+          name="timeScale"
+          id="timeScale-48H"
+          value={48}
+          checked={numHoursShown === 48}
+          onChange={e => setNumHoursShown(48)}
+        />
+        <StyledRadioLabel
+          style={{
+            backgroundColor: `${(numHoursShown === 48) ? "var(--color-background-hue)" : "inherit"}`,
+            color: `${(numHoursShown === 48) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+          }}
+          selected={numHoursShown === 48} htmlFor="timeScale-48H"
+        >
+          48H
+        </StyledRadioLabel>
+        <input
+          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+          type="radio"
+          name="timeScale"
+          id="timeScale-36H"
+          value={36}
+          checked={numHoursShown === 36}
+          onChange={e => setNumHoursShown(36)}
+        />
+        <StyledRadioLabel
+          style={{
+            backgroundColor: `${(numHoursShown === 36) ? "var(--color-background-hue)" : "inherit"}`,
+            color: `${(numHoursShown === 36) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+          }}
+          selected={numHoursShown === 36} htmlFor="timeScale-36H"
+        >
+          36H
+        </StyledRadioLabel>
+      </div>
     </div>
-  </>)
+  )
 }
 
 const StyledRadioLabel = styled.label<{selected: boolean}>`
@@ -284,7 +298,6 @@ function findPrice(
 
 type TypeXScale = d3.ScaleTime<number, number, never>
 type TypeYScale = d3.ScaleLinear<number, number, never>
-type Data = {date: Date, price: number}[]
 
 function XAxis({dms, xScale, numHoursShown}: {dms: NewChartSettings, xScale: TypeXScale, numHoursShown: number}) {
   return (
@@ -353,7 +366,7 @@ function MaxText({ xScale, yScale, maxPriceItem }: { xScale: TypeXScale, maxPric
   </text>;
 }
 
-function StepGradient({ data, xScale, yScale }: { data: Data, xScale: TypeXScale, yScale: TypeYScale}) {
+function StepGradient({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
   const stepCurve = createStepCurve(data, xScale, yScale)
 
   const closedStepCurve = stepCurve + " " + [
@@ -391,25 +404,48 @@ function StepGradient({ data, xScale, yScale }: { data: Data, xScale: TypeXScale
   )
 }
 
-function StepCurve({ data, xScale, yScale }: { data: Data, xScale: TypeXScale, yScale: TypeYScale}) {
+function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
 
   const stepCurve = createStepCurve(data, xScale, yScale)
+  const stepCurveWithTarif = createStepCurveWithTarif(data, xScale, yScale)
 
   return (
-    <path
-      d={stepCurve}
-      fill="none"
-      stroke="var(--color-foreground-hue)"
-      strokeWidth={2}
-      strokeLinecap="round"
-      style={{
-        pointerEvents: "none"
-      }}
-    />
+    <>
+      <path
+        d={stepCurveWithTarif}
+        fill="none"
+        stroke="hsl(209, 32%, 23%)"
+        strokeWidth={2}
+        strokeLinecap="round"
+        style={{
+          pointerEvents: "none"
+        }}
+      />
+      <path
+        d={stepCurve}
+        fill="none"
+        stroke="var(--color-foreground-hue)"
+        strokeWidth={2}
+        strokeLinecap="round"
+        style={{
+          pointerEvents: "none"
+        }}
+      />
+    </>
   )
 }
 
-function createStepCurve(data: Data, xScale: TypeXScale, yScale: TypeYScale) {
+function createStepCurveWithTarif(data: DataEntries, xScale: TypeXScale, yScale: TypeYScale) {
+  const head = data.slice().splice(0, 1)[0]
+  
+  const start = ["M", xScale(head.date), yScale(head.price), "H", xScale(addHours(1, head.date))].join(" ")
+  const mid = data.map(({date, rawPrice}) => {
+    return ["L", xScale(date), yScale(rawPrice), "H", xScale(addHours(1, date))].join(" ")
+  })
+  return start + " " + mid.join(" ")
+}
+
+function createStepCurve(data: DataEntries, xScale: TypeXScale, yScale: TypeYScale) {
   const head = data.slice().splice(0, 1)[0]
   
   const start = ["M", xScale(head.date), yScale(head.price), "H", xScale(addHours(1, head.date))].join(" ")
