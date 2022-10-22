@@ -4,11 +4,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DateAxis } from "./DateAxis";
 import { PriceAxis } from "./PriceAxis";
 import styled from "styled-components";
+import { MashType } from "../server-functions/MashData";
+import { MashTypeHydated } from "../pages";
 
 type DataEntries = {
   date: Date;
   price: number;
-  rawPrice: number;
 }[]
 
 export type ChartSettings = {
@@ -42,7 +43,29 @@ const localeFormat : Intl.DateTimeFormatOptions = {
   // timeZoneName: 'short'
 }
 
-export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => {
+export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated }) => {
+
+  const [withMarketPrice, setWithMarketPrice] = useState(true)
+  const [withElafgift, setWithElafgift] = useState(true)
+  const [withNetTarif, setWithNetTarif] = useState(true)
+  const [withVAT, setWithVAT] = useState(true)
+
+  const compositePrices = useMemo(() => (
+    dataEntries.map(({ date, marketPrice, electricityTax: elafgift, netTarif, vat }) => {
+      let price = 0
+      if (withMarketPrice) price += marketPrice
+      if (withElafgift) price += elafgift
+      if (withNetTarif) price += netTarif
+      if (withVAT) price *= vat
+      return {
+        date,
+        price
+      }
+    })
+  ), [dataEntries, withMarketPrice, withElafgift, withNetTarif, withVAT])
+
+  const passedData = compositePrices
+
   const [numHoursShown, setNumHoursShown] = useState(48)
 
   const boundArea = useRef<SVGRectElement>(null)
@@ -65,11 +88,11 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
 
   const beginDate = addHours(1-numHoursShown, maxDate);
 
-  const boundPadding = 40
+  const boundPadding = 50
 
   const yScale = useMemo(() => (
     d3.scaleLinear()
-    .domain([Math.ceil(maxPrice/100)*100, Math.floor(minPrice/100)*100])
+    .domain([maxPrice, minPrice])
     .range([boundPadding, -boundPadding + dms.boundedHeight])
   ), [maxPrice, minPrice, dms])
 
@@ -206,7 +229,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
             backgroundColor: `${(numHoursShown === 24*30) ? "var(--color-background-hue)" : "inherit"}`,
             color: `${(numHoursShown === 24*30) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
           }}
-          selected={numHoursShown === 24*30} htmlFor="timeScale-1M"
+          htmlFor="timeScale-1M"
         >
           1M
         </StyledRadioLabel>
@@ -224,7 +247,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
             backgroundColor: `${(numHoursShown === 24*7) ? "var(--color-background-hue)" : "inherit"}`,
             color: `${(numHoursShown === 24*7) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
           }}
-          selected={numHoursShown === 24*7} htmlFor="timeScale-1W"
+          htmlFor="timeScale-1W"
         >
           1W
         </StyledRadioLabel>
@@ -242,7 +265,7 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
             backgroundColor: `${(numHoursShown === 48) ? "var(--color-background-hue)" : "inherit"}`,
             color: `${(numHoursShown === 48) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
           }}
-          selected={numHoursShown === 48} htmlFor="timeScale-48H"
+          htmlFor="timeScale-48H"
         >
           48H
         </StyledRadioLabel>
@@ -260,21 +283,116 @@ export const InterativeChart = ({ data: passedData }: { data: DataEntries }) => 
             backgroundColor: `${(numHoursShown === 36) ? "var(--color-background-hue)" : "inherit"}`,
             color: `${(numHoursShown === 36) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
           }}
-          selected={numHoursShown === 36} htmlFor="timeScale-36H"
+          htmlFor="timeScale-36H"
         >
           36H
         </StyledRadioLabel>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <input
+            type="checkbox"
+            name="with"
+            id="with-marketprice"
+            checked={withMarketPrice}
+            onChange={e => setWithMarketPrice(!withMarketPrice)}
+          />
+          <StyledRadioLabel
+            style={{
+              color: `var(--color-text-2)`,
+            }}
+            htmlFor="with-marketprice"
+          >
+            marketprice
+          </StyledRadioLabel>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <input
+            type="checkbox"
+            name="with"
+            id="with-elafgift"
+            checked={withElafgift}
+            onChange={e => setWithElafgift(!withElafgift)}
+          />
+          <StyledRadioLabel
+            style={{
+              color: `var(--color-text-2)`
+            }}
+            htmlFor="with-elafgift"
+          >
+            elafgift
+          </StyledRadioLabel>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <input
+            type="checkbox"
+            name="with"
+            id="with-nettarif"
+            checked={withNetTarif}
+            onChange={e => setWithNetTarif(!withNetTarif)}
+          />
+          <StyledRadioLabel
+            style={{
+              color: `var(--color-text-2)`
+            }}
+            htmlFor="with-nettarif"
+          >
+            Radius nettarif
+          </StyledRadioLabel>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <input
+            style={{ pointerEvents: "none" }}
+            type="checkbox"
+            name="with"
+            id="with-moms"
+            checked={withVAT}
+            onChange={e => setWithVAT(!withVAT)}
+          />
+          <StyledRadioLabel
+            style={{
+              color: `var(--color-text-2)`
+            }}
+            htmlFor="with-moms"
+          >
+            VAT
+          </StyledRadioLabel>
+        </div>
       </div>
     </div>
   )
 }
 
-const StyledRadioLabel = styled.label<{selected: boolean}>`
-  background-color: ${selected => selected ? "var(--color-background-hue)" : "var(--color-background)"};
+const StyledRadioLabel = styled.label`
   border-radius: 1000px;
-  margin-top: 1em;
+  margin: 0.5em 0;
   padding: 0.1em 0.7em;
-  color: ${selected => selected ? "var(--color-foreground-hue)" : "var(--color-text-2)"};
 `
 
 function findPrice(
@@ -366,61 +484,50 @@ function MaxText({ xScale, yScale, maxPriceItem }: { xScale: TypeXScale, maxPric
   </text>;
 }
 
-function StepGradient({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
-  const stepCurve = createStepCurve(data, xScale, yScale)
+// function StepGradient({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
+//   const stepCurve = createStepCurve(data, xScale, yScale)
 
-  const closedStepCurve = stepCurve + " " + [
-    "V", yScale(0),
-    "H", xScale(data[0].date),
-    "Z"
-  ].join(" ")
+//   const closedStepCurve = stepCurve + " " + [
+//     "V", yScale(0),
+//     "H", xScale(data[0].date),
+//     "Z"
+//   ].join(" ")
 
-  return (
-    <>
-      <path
-        d={closedStepCurve}
-        fill="url(#Gradient1)"
-        mask="url(#fade)"
-      />
-      <defs>
-        <linearGradient id="Gradient1">
-          <stop offset="0%"   stopColor="hsl(250,72%,27%)" />
-          <stop offset="20%"  stopColor="hsl(252,75%,32%)" />
-          <stop offset="30%"  stopColor="hsl(260,89%,40%)" />
-          <stop offset="50%"  stopColor="hsl(277,85%,45%)" />
-          <stop offset="70%"  stopColor="hsl(294,75%,45%)" />
-          <stop offset="80%"  stopColor="hsl(327,55%,62%)" />
-          <stop offset="100%" stopColor="hsl(307,41%,68%)" />
-        </linearGradient>
-        <linearGradient id="fadeGrad" y2="1" x2="0">
-          <stop offset="0%" stopColor="white" stopOpacity="1"/>
-          <stop offset="100%" stopColor="white" stopOpacity="0"/>
-        </linearGradient>
-        <mask id="fade" maskContentUnits="objectBoundingBox">
-          <rect width="1" height="1" fill="url(#fadeGrad)"/>
-        </mask>
-      </defs>
-    </>
-  )
-}
+//   return (
+//     <>
+//       <path
+//         d={closedStepCurve}
+//         fill="url(#Gradient1)"
+//         mask="url(#fade)"
+//       />
+//       <defs>
+//         <linearGradient id="Gradient1">
+//           <stop offset="0%"   stopColor="hsl(250,72%,27%)" />
+//           <stop offset="20%"  stopColor="hsl(252,75%,32%)" />
+//           <stop offset="30%"  stopColor="hsl(260,89%,40%)" />
+//           <stop offset="50%"  stopColor="hsl(277,85%,45%)" />
+//           <stop offset="70%"  stopColor="hsl(294,75%,45%)" />
+//           <stop offset="80%"  stopColor="hsl(327,55%,62%)" />
+//           <stop offset="100%" stopColor="hsl(307,41%,68%)" />
+//         </linearGradient>
+//         <linearGradient id="fadeGrad" y2="1" x2="0">
+//           <stop offset="0%" stopColor="white" stopOpacity="1"/>
+//           <stop offset="100%" stopColor="white" stopOpacity="0"/>
+//         </linearGradient>
+//         <mask id="fade" maskContentUnits="objectBoundingBox">
+//           <rect width="1" height="1" fill="url(#fadeGrad)"/>
+//         </mask>
+//       </defs>
+//     </>
+//   )
+// }
 
 function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
 
   const stepCurve = createStepCurve(data, xScale, yScale)
-  const stepCurveWithTarif = createStepCurveWithTarif(data, xScale, yScale)
 
   return (
     <>
-      <path
-        d={stepCurveWithTarif}
-        fill="none"
-        stroke="hsl(209, 32%, 23%)"
-        strokeWidth={2}
-        strokeLinecap="round"
-        style={{
-          pointerEvents: "none"
-        }}
-      />
       <path
         d={stepCurve}
         fill="none"
@@ -433,16 +540,6 @@ function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXS
       />
     </>
   )
-}
-
-function createStepCurveWithTarif(data: DataEntries, xScale: TypeXScale, yScale: TypeYScale) {
-  const head = data.slice().splice(0, 1)[0]
-  
-  const start = ["M", xScale(head.date), yScale(head.price), "H", xScale(addHours(1, head.date))].join(" ")
-  const mid = data.map(({date, rawPrice}) => {
-    return ["L", xScale(date), yScale(rawPrice), "H", xScale(addHours(1, date))].join(" ")
-  })
-  return start + " " + mid.join(" ")
 }
 
 function createStepCurve(data: DataEntries, xScale: TypeXScale, yScale: TypeYScale) {

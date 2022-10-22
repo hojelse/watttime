@@ -6,12 +6,20 @@ type Props = {
   mashData: MashType
 }
 
+export type MashTypeHydated = {
+  date: Date
+  marketPrice: number
+  electricityTax: number
+  netTarif: number
+  vat: number
+}[]
+
 const Home: NextPage<Props> = ({mashData}) => {
 
   // Revive dates
   const dataEntries =
-    mashData.map(({HourDK, ...rest}) => ({
-      date: new Date(HourDK),
+    mashData.map(({hour, ...rest}) => ({
+      date: new Date(hour),
       ...rest
     }))
 
@@ -25,7 +33,7 @@ const Home: NextPage<Props> = ({mashData}) => {
           backgroundColor: "var(--color-background)",
         }}
       >
-        <InterativeChart data={dataEntries}/>
+        <InterativeChart dataEntries={dataEntries}/>
       </div>
      
     </>
