@@ -100,7 +100,7 @@ function HourText(value: Date) {
 }
 
 function hourFormat(date: Date) {
-  return date.toLocaleString("en-UK", {
+  return date.toLocaleString("da-DK", {
     hour: "2-digit",
     // minute: "2-digit",
     hour12: false,
@@ -122,7 +122,7 @@ function DayNumberText(value: Date) {
 }
 
 function dayNumberFormat(date: Date) {
-  return date.toLocaleString("en-UK", {
+  return date.toLocaleString("da-DK", {
     day: "numeric"
   })
 }
@@ -142,7 +142,7 @@ function WeekDayText(value: Date) {
 }
 
 function weekDayFormat(date: Date) {
-  return date.toLocaleString("en-UK", {
+  return date.toLocaleString("da-DK", {
     weekday: "short",
   })
 }
@@ -162,7 +162,7 @@ function MonthText(value: Date) {
 }
 
 function monthFormat(date: Date) {
-  return date.toLocaleString("en-UK", {
+  return date.toLocaleString("da-DK", {
     month: "short",
   })
 }

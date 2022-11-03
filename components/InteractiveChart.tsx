@@ -29,7 +29,7 @@ const chartSettings: ChartSettings = {
 }
 
 function myFormat(date: Date) {
-  return date.toLocaleString("en-UK", localeFormat)
+  return date.toLocaleString("da-DK", localeFormat)
 }
 
 const localeFormat : Intl.DateTimeFormatOptions = {
@@ -249,7 +249,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           }}
           htmlFor="timeScale-1W"
         >
-          1W
+          1U
         </StyledRadioLabel>
         <input
           style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
@@ -267,7 +267,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           }}
           htmlFor="timeScale-48H"
         >
-          48H
+          48T
         </StyledRadioLabel>
         <input
           style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
@@ -285,7 +285,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           }}
           htmlFor="timeScale-36H"
         >
-          36H
+          36T
         </StyledRadioLabel>
       </div>
       <div
@@ -314,7 +314,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             }}
             htmlFor="with-marketprice"
           >
-            marketprice
+            Markedspris
           </StyledRadioLabel>
         </div>
         <div
@@ -336,7 +336,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             }}
             htmlFor="with-elafgift"
           >
-            elafgift
+            Elafgift
           </StyledRadioLabel>
         </div>
         <div
@@ -358,7 +358,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             }}
             htmlFor="with-nettarif"
           >
-            Radius nettarif
+            Radius Nettarif
           </StyledRadioLabel>
         </div>
         <div
@@ -381,7 +381,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             }}
             htmlFor="with-moms"
           >
-            VAT
+            Moms
           </StyledRadioLabel>
         </div>
       </div>
