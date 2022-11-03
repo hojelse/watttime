@@ -160,7 +160,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           }}
           ref={ref}
         >
-          <svg width={dms.width} height={dms.height}>
+          <svg width={dms.width} height={dms.height} style={{position: "absolute"}}>
             <defs>
                 <clipPath id="clipPath">
                     <rect x={0} y={0} width={dms.boundedWidth} height={dms.boundedHeight} />
@@ -212,7 +212,8 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
       <div
         style={{
           display: "flex",
-          justifyContent: "space-around"
+          justifyContent: "space-around",
+          flexWrap: "wrap"
         }}
       >
         <input
@@ -293,6 +294,8 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           display: "flex",
           justifyContent: "space-around",
           alignItems: "center",
+          width: "100%",
+          flexWrap: "wrap"
         }}
       >
         <div
