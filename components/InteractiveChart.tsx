@@ -220,6 +220,24 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
           type="radio"
           name="timeScale"
+          id="timeScale-1Y"
+          value={24*30*12}
+          checked={numHoursShown === 24*30*12}
+          onChange={e => setNumHoursShown(24*30*12)}
+        />
+        <StyledRadioLabel
+          style={{
+            backgroundColor: `${(numHoursShown === 24*30*12) ? "var(--color-background-hue)" : "inherit"}`,
+            color: `${(numHoursShown === 24*30*12) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+          }}
+          htmlFor="timeScale-1Y"
+        >
+          1Å
+        </StyledRadioLabel>
+        <input
+          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+          type="radio"
+          name="timeScale"
           id="timeScale-1M"
           value={24*30}
           checked={numHoursShown === 24*30}
@@ -269,24 +287,6 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           htmlFor="timeScale-48H"
         >
           48T
-        </StyledRadioLabel>
-        <input
-          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-          type="radio"
-          name="timeScale"
-          id="timeScale-36H"
-          value={36}
-          checked={numHoursShown === 36}
-          onChange={e => setNumHoursShown(36)}
-        />
-        <StyledRadioLabel
-          style={{
-            backgroundColor: `${(numHoursShown === 36) ? "var(--color-background-hue)" : "inherit"}`,
-            color: `${(numHoursShown === 36) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
-          }}
-          htmlFor="timeScale-36H"
-        >
-          36T
         </StyledRadioLabel>
       </div>
       <div

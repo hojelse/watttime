@@ -44,7 +44,7 @@ export async function MashData(): Promise<MashType> {
 }
 
 async function getMarketPrice() {
-  const hourCount = 24 * 30
+  const hourCount = 24 * 30 * 12
   const res = await fetch(`https://api.energidataservice.dk/dataset/Elspotprices?limit=${hourCount}&offset=0&sort=HourUTC DESC&timezone=utc+1&filter={"PriceArea":"DK2"}`)
   const data = (await res.json()) as ElspotType
 
