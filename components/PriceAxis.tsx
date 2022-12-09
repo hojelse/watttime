@@ -14,7 +14,7 @@ export const PriceAxis = ({ dms, domain, range }: ArgType) => {
       .domain(domain)
       .range(range)
     const width = range[1] - range[0]
-    const pixelsPerTick = 30
+    const pixelsPerTick = 60
     const numberOfTicksTarget = Math.max(1, Math.floor(width / pixelsPerTick))
 
     return yScale.ticks(numberOfTicksTarget)

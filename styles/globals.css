@@ -2,9 +2,10 @@
   --chart-border-width: 0.02;
   --chart-divider-width: 0.002;
   --color-hue: 210;
-  --color-foreground: hsl(0, 0%, 100%);
-  --color-foreground-hue: hsl(210, 100%, 50%);
   
+  --color-foreground-hue: hsl(210, 100%, 50%);
+
+  --color-foreground: hsl(0, 0%, 100%);
   --color-text: hsl(0, 0%, 86%);
   --color-text-2: hsl(0, 0%, 100%, 0.5);
   --color-text-3: hsla(0, 0%, 100%, 0.1);
@@ -14,6 +15,20 @@
   --color-background-2: hsl(0, 0%, 5%);
   --color-background: hsl(0, 0%, 5%);
 }
+
+/* @media (prefers-color-scheme: light) {
+  :root {
+    --color-foreground: hsl(0, 0%, 100%);
+    --color-text: hsl(0, 0%, 10%);
+    --color-text-2: hsl(0, 0%, 10%, 0.8);
+    --color-text-3: hsla(0, 0%, 10%, 0.1);
+    --color-background-hue: hsl(210, 100%, 90%);
+    --color-background-4: hsl(0, 0%, 100%);
+    --color-background-3: hsl(0, 0%, 100%);
+    --color-background-2: hsl(0, 0%, 100%);
+    --color-background: hsl(0, 0%, 100%);
+  }
+} */
 
 html,
 body {

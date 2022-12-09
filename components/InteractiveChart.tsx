@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DateAxis } from "./DateAxis";
 import { PriceAxis } from "./PriceAxis";
 import styled from "styled-components";
-import { MashType } from "../server-functions/MashData";
 import { MashTypeHydated } from "../pages";
 
 type DataEntries = {
@@ -36,7 +35,6 @@ const localeFormat : Intl.DateTimeFormatOptions = {
   // year: 'numeric',
   month: 'short',
   day: 'numeric',
-  weekday: "short",
   hour: '2-digit',
   minute: '2-digit',
   hour12: false,
@@ -139,13 +137,58 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
     <div
       style={{
         display: "grid",
-        gridTemplateRows: "auto auto 1fr auto",
+        gridTemplateRows: "auto 1fr",
         height: "100%",
-        width: "100%"
+        width: "100%",
+        padding: "0em 1em 1em 1em",
       }}
     >
-      <h4 style={{ color: "var(--color-text-2)", marginBottom: "0" }}>{myFormat(highlightTime ?? currTime)}</h4>
-      <h1 style={{ color: "var(--color-text)"}}>ØRE {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}</h1>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "2em 0em 1em 0em",
+          // flexWrap: "wrap",
+          // backgroundColor: "#eee",
+          borderRadius: "0 0 1.5em 1.5em"
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            color: "var(--color-text)",
+            gap: "0.5em"
+          }}
+        >
+          <h1
+            style={{
+              color: "var(--color-text)",
+              margin: "0",
+            }}
+          >
+            {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}
+          </h1>
+          <h4
+            style={{
+              color: "var(--color-text)",
+              margin: "0",
+            }}
+          >
+            øre kWh
+          </h4>
+        </div>
+        <h4
+          style={{
+            color: "var(--color-text)",
+            margin: "0"
+          }}
+        >
+          {myFormat(highlightTime ?? currTime)}
+        </h4>
+      </div>
       <div style={{
           width: "100%",
           minHeight: "0",
@@ -294,7 +337,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           display: "flex",
           justifyContent: "space-around",
           alignItems: "center",
-          width: "100%",
+          padding: "1em 0em 1em 0em",
           flexWrap: "wrap"
         }}
       >

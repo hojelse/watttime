@@ -29,7 +29,6 @@ const Home: NextPage<Props> = ({mashData}) => {
         className="page"
         style={{
           width: "100vw",
-          padding: "3em 0",
           backgroundColor: "var(--color-background)",
         }}
       >
