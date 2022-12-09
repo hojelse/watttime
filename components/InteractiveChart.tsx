@@ -34,9 +34,9 @@ function myFormat(date: Date) {
 
 const localeFormat : Intl.DateTimeFormatOptions = {
   // year: 'numeric',
-  // month: 'long',
-  // day: 'numeric',
-  weekday: "long",
+  month: 'short',
+  day: 'numeric',
+  weekday: "short",
   hour: '2-digit',
   minute: '2-digit',
   hour12: false,
