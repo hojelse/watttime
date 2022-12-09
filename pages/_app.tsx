@@ -13,7 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
         <meta name="description" content="Description" />
         <meta name="keywords" content="Keywords" />
-        <title>Elpris</title>
+        <title>Strømmen</title>
 
         <link rel="manifest" href="/manifest.json" />
         <link

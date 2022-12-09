@@ -1,4 +1,4 @@
-# Elpris
+# Strømmen.dk
 
 Chart of electricity prices in east Denmark.
 
