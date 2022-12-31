@@ -21,14 +21,21 @@ export type ElspotType = {
 export async function MashData(): Promise<MashType> {
   const marketPrices = await getMarketPrice()
 
-  const tarifHours: any = await getNetTarifs()
+  const tarifs: any = await getNetTarifs()
+
+  const firstOrDefault = (currDate: Date, tarifs: any) => {
+    for (let i = 0; i < tarifs.length; i++) {
+      const tarif = tarifs[i];
+      if (tarif.from <= currDate && currDate <= tarif.to)
+        return tarif.hours[currDate.getHours()] * 100
+    }
+    return 0
+  }
 
   // Apply nettarifs
   return marketPrices.map(({HourDK, price}) => {
     const currDate = new Date(HourDK)
-    const netTarif = (tarifHours.from <= currDate && currDate <= tarifHours.to)
-      ? tarifHours.hours[currDate.getHours()] * 100
-      : 0
+    const netTarif = firstOrDefault(currDate, tarifs)
 
     const vat = 1.25
     const electricityTax = 76.3
@@ -75,20 +82,30 @@ export function rawPrice_OrePrKwt(SpotPriceEUR: any) {
 }
 
 async function getNetTarifs() {
-  const tarifRes = await fetch(`https://api.energidataservice.dk/dataset/DatahubPricelist?offset=0&start=2022-10-01T00:00&end=2022-10-02T00:00&filter=%7B%22ChargeOwner%22:%22Radius%20Elnet%20A/S%22,%22ChargeTypeCode%22:%22DT_C_01%22%7D&sort=ValidFrom%20DESC&timezone=dk`)
+  const tarifRes = await fetch(`https://api.energidataservice.dk/dataset/DatahubPricelist?offset=0&filter=%7B%22ChargeOwner%22:%22Radius%20Elnet%20A/S%22,%22ChargeTypeCode%22:%22DT_C_01%22%7D&sort=ValidFrom%20DESC&timezone=dk`)
 
   const tarifData = await tarifRes.json()
-  const firstTarif = tarifData.records[0]
+  const recs = tarifData.records
 
-  const tarifHours: any = {}
+  const tarifs: any = []
 
-  tarifHours["from"] = new Date(firstTarif.ValidFrom)
-  tarifHours["to"] = new Date(firstTarif.ValidTo)
+  recs.forEach((rec: any) => {
+    const tarifHours: any = {}
 
-  tarifHours["hours"] = []
-  for (let i = 1; i <= 24; i++) {
-    const key = `Price${i}`
-    tarifHours["hours"].push(firstTarif[key])
-  }
-  return tarifHours
+    const from = new Date(rec.ValidFrom)
+    const to = new Date(rec.ValidTo)
+
+    tarifHours["from"] = from
+    tarifHours["to"] = to
+
+    tarifHours["hours"] = []
+    for (let i = 1; i <= 24; i++) {
+      const key = `Price${i}`
+      tarifHours["hours"].push(rec[key])
+    }
+
+    tarifs.push(tarifHours)
+  });
+  
+  return tarifs
 }
