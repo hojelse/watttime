@@ -1,6 +1,6 @@
 # Strømmen.dk
 
-Chart of electricity prices in east Denmark.
+Chart of electricity prices in the capital region of Copenhagen, Denmark.
 
 <p align="center">
   <img src="strommen-screenshot.png" alt="strommen-screenshot.png" height="700"/>
