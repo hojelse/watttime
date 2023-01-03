@@ -1,6 +1,6 @@
 import { NewChartSettings, useChartDimensions } from "../hooks/useChartDimensions";
 import * as d3 from "d3";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { DateAxis } from "./DateAxis";
 import { PriceAxis } from "./PriceAxis";
 import styled from "styled-components";
@@ -143,52 +143,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
         padding: "0em 1em 1em 1em",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "2em 0em 1em 0em",
-          // flexWrap: "wrap",
-          // backgroundColor: "#eee",
-          borderRadius: "0 0 1.5em 1.5em"
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            color: "var(--color-text)",
-            gap: "0.5em"
-          }}
-        >
-          <h1
-            style={{
-              color: "var(--color-text)",
-              margin: "0",
-            }}
-          >
-            {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}
-          </h1>
-          <h4
-            style={{
-              color: "var(--color-text)",
-              margin: "0",
-            }}
-          >
-            øre kWh
-          </h4>
-        </div>
-        <h4
-          style={{
-            color: "var(--color-text)",
-            margin: "0"
-          }}
-        >
-          {myFormat(highlightTime ?? currTime)}
-        </h4>
-      </div>
+      {Header(data, highlightTime, currTime)}
       <div style={{
           width: "100%",
           minHeight: "0",
@@ -222,9 +177,21 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
                 height={dms.boundedHeight}
                 fill="var(--color-background-4)"
               />
-              <MinText xScale={xScale} yScale={yScale} minPriceItem={minPriceItem} />
-              <MaxText xScale={xScale} yScale={yScale} maxPriceItem={maxPriceItem} />
-              <StepCurve xScale={xScale} yScale={yScale} data={data} />
+              <MinText
+                xScale={xScale}
+                yScale={yScale}
+                minPriceItem={minPriceItem}
+              />
+              <MaxText
+                xScale={xScale}
+                yScale={yScale}
+                maxPriceItem={maxPriceItem}
+              />
+              <StepCurve
+                xScale={xScale}
+                yScale={yScale}
+                data={data}
+              />
               <line
                 stroke="var(--color-text)"
                 x1={highlightOffset ?? currOffset} y1={0}
@@ -247,8 +214,15 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
                 }}
               />
             </g>
-            <XAxis xScale={xScale} dms={dms} numHoursShown={numHoursShown} />
-            <YAxis yScale={yScale} dms={dms} />
+            <XAxis
+              xScale={xScale}
+              dms={dms}
+              numHoursShown={numHoursShown}
+            />
+            <YAxis
+              yScale={yScale}
+              dms={dms}
+            />
           </svg>
         </div>
       </div>
@@ -259,78 +233,30 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           flexWrap: "wrap"
         }}
       >
-        <input
-          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-          type="radio"
-          name="timeScale"
-          id="timeScale-1Y"
+        <DateRangeRadioButton
+          name={"1Å"}
           value={24*30*12}
-          checked={numHoursShown === 24*30*12}
-          onChange={e => setNumHoursShown(24*30*12)}
+          numHoursShown={numHoursShown}
+          setNumHoursShown={setNumHoursShown}
         />
-        <StyledRadioLabel
-          style={{
-            backgroundColor: `${(numHoursShown === 24*30*12) ? "var(--color-background-hue)" : "inherit"}`,
-            color: `${(numHoursShown === 24*30*12) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
-          }}
-          htmlFor="timeScale-1Y"
-        >
-          1Å
-        </StyledRadioLabel>
-        <input
-          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-          type="radio"
-          name="timeScale"
-          id="timeScale-1M"
+        <DateRangeRadioButton
+          name={"1M"}
           value={24*30}
-          checked={numHoursShown === 24*30}
-          onChange={e => setNumHoursShown(24*30)}
+          numHoursShown={numHoursShown}
+          setNumHoursShown={setNumHoursShown}
         />
-        <StyledRadioLabel
-          style={{
-            backgroundColor: `${(numHoursShown === 24*30) ? "var(--color-background-hue)" : "inherit"}`,
-            color: `${(numHoursShown === 24*30) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
-          }}
-          htmlFor="timeScale-1M"
-        >
-          1M
-        </StyledRadioLabel>
-        <input
-          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-          type="radio"
-          name="timeScale"
-          id="timeScale-1W"
+        <DateRangeRadioButton
+          name={"1U"}
           value={24*7}
-          checked={numHoursShown === 24*7}
-          onChange={e => setNumHoursShown(24*7)}
+          numHoursShown={numHoursShown}
+          setNumHoursShown={setNumHoursShown}
         />
-        <StyledRadioLabel
-          style={{
-            backgroundColor: `${(numHoursShown === 24*7) ? "var(--color-background-hue)" : "inherit"}`,
-            color: `${(numHoursShown === 24*7) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
-          }}
-          htmlFor="timeScale-1W"
-        >
-          1U
-        </StyledRadioLabel>
-        <input
-          style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-          type="radio"
-          name="timeScale"
-          id="timeScale-48H"
+        <DateRangeRadioButton
+          name={"48T"}
           value={48}
-          checked={numHoursShown === 48}
-          onChange={e => setNumHoursShown(48)}
+          numHoursShown={numHoursShown}
+          setNumHoursShown={setNumHoursShown}
         />
-        <StyledRadioLabel
-          style={{
-            backgroundColor: `${(numHoursShown === 48) ? "var(--color-background-hue)" : "inherit"}`,
-            color: `${(numHoursShown === 48) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
-          }}
-          htmlFor="timeScale-48H"
-        >
-          48T
-        </StyledRadioLabel>
       </div>
       <div
         style={{
@@ -341,96 +267,127 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           flexWrap: "wrap"
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <input
-            type="checkbox"
-            name="with"
-            id="with-marketprice"
-            checked={withMarketPrice}
-            onChange={e => setWithMarketPrice(!withMarketPrice)}
-          />
-          <StyledRadioLabel
-            style={{
-              color: `var(--color-text-2)`,
-            }}
-            htmlFor="with-marketprice"
-          >
-            Markedspris
-          </StyledRadioLabel>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <input
-            type="checkbox"
-            name="with"
-            id="with-elafgift"
-            checked={withElafgift}
-            onChange={e => setWithElafgift(!withElafgift)}
-          />
-          <StyledRadioLabel
-            style={{
-              color: `var(--color-text-2)`
-            }}
-            htmlFor="with-elafgift"
-          >
-            Elafgift
-          </StyledRadioLabel>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <input
-            type="checkbox"
-            name="with"
-            id="with-nettarif"
-            checked={withNetTarif}
-            onChange={e => setWithNetTarif(!withNetTarif)}
-          />
-          <StyledRadioLabel
-            style={{
-              color: `var(--color-text-2)`
-            }}
-            htmlFor="with-nettarif"
-          >
-            Radius Nettarif
-          </StyledRadioLabel>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <input
-            style={{ pointerEvents: "none" }}
-            type="checkbox"
-            name="with"
-            id="with-moms"
-            checked={withVAT}
-            onChange={e => setWithVAT(!withVAT)}
-          />
-          <StyledRadioLabel
-            style={{
-              color: `var(--color-text-2)`
-            }}
-            htmlFor="with-moms"
-          >
-            Moms
-          </StyledRadioLabel>
-        </div>
+        <Toggle
+          name={"Markedspris"}
+          state={withMarketPrice}
+          set={setWithMarketPrice}
+        />
+        <Toggle
+          name={"Elafgift"}
+          state={withElafgift}
+          set={setWithElafgift}
+        />
+        <Toggle
+          name={"Radius Nettarif"}
+          state={withNetTarif}
+          set={setWithNetTarif}
+        />
+        <Toggle
+          name={"Moms"}
+          state={withVAT}
+          set={setWithVAT}
+        />
       </div>
+    </div>
+  )
+}
+
+function Header(data: { date: Date; price: number; }[], highlightTime: Date | undefined, currTime: Date) {
+  return <div
+    style={{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "2em 0em 1em 0em",
+      // flexWrap: "wrap",
+      // backgroundColor: "#eee",
+      borderRadius: "0 0 1.5em 1.5em"
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        color: "var(--color-text)",
+        gap: "0.5em"
+      }}
+    >
+      <h1
+        style={{
+          color: "var(--color-text)",
+          margin: "0",
+        }}
+      >
+        {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}
+      </h1>
+      <h4
+        style={{
+          color: "var(--color-text)",
+          margin: "0",
+        }}
+      >
+        øre kWh
+      </h4>
+    </div>
+    <h4
+      style={{
+        color: "var(--color-text)",
+        margin: "0"
+      }}
+    >
+      {myFormat(highlightTime ?? currTime)}
+    </h4>
+  </div>;
+}
+
+function DateRangeRadioButton({name, value, numHoursShown, setNumHoursShown}: {name: string, value: number, numHoursShown: number, setNumHoursShown: Dispatch<SetStateAction<number>>}) {
+  return <>
+    <input
+      style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
+      type="radio"
+      name="timeScale"
+      id={`timeScale-${name}`}
+      value={value}
+      checked={numHoursShown === value}
+      onChange={e => setNumHoursShown(value)}
+    />
+    <StyledRadioLabel
+      style={{
+        backgroundColor: `${(numHoursShown === value) ? "var(--color-background-hue)" : "inherit"}`,
+        color: `${(numHoursShown === value) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+      }}
+      htmlFor={`timeScale-${name}`}
+    >
+      {name}
+    </StyledRadioLabel>
+  </>
+}
+
+function Toggle({name, state, set}: {name: string, state: boolean, set: Dispatch<SetStateAction<boolean>>}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <input
+        style={{ pointerEvents: "none" }}
+        type="checkbox"
+        name="with"
+        id={`with-${name}`}
+        checked={state}
+        onChange={e => set(!state)}
+      />
+      <StyledRadioLabel
+        style={{
+          color: `var(--color-text-2)`
+        }}
+        htmlFor={`with-${name}`}
+      >
+        {name}
+      </StyledRadioLabel>
     </div>
   )
 }
