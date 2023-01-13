@@ -137,13 +137,13 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
     <div
       style={{
         display: "grid",
-        gridTemplateRows: "auto 1fr",
+        gridTemplateRows: "auto 1fr auto auto",
         height: "100%",
         width: "100%",
         padding: "0em 1em 1em 1em",
       }}
     >
-      {Header(data, highlightTime, currTime)}
+      <Header data={data} highlightTime={highlightTime} currTime={currTime}/>
       <div style={{
           width: "100%",
           minHeight: "0",
@@ -262,6 +262,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
         style={{
           display: "flex",
           justifyContent: "space-around",
+          gap: "1em",
           alignItems: "center",
           padding: "1em 0em 1em 0em",
           flexWrap: "wrap"
@@ -292,7 +293,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
   )
 }
 
-function Header(data: { date: Date; price: number; }[], highlightTime: Date | undefined, currTime: Date) {
+function Header({data, highlightTime, currTime}: {data: { date: Date; price: number; }[], highlightTime: Date | undefined, currTime: Date}) {
   return <div
     style={{
       display: "flex",
@@ -342,61 +343,83 @@ function Header(data: { date: Date; price: number; }[], highlightTime: Date | un
 }
 
 function DateRangeRadioButton({name, value, numHoursShown, setNumHoursShown}: {name: string, value: number, numHoursShown: number, setNumHoursShown: Dispatch<SetStateAction<number>>}) {
-  return <>
-    <input
-      style={{ pointerEvents: "none", position: "absolute", opacity: "0" }}
-      type="radio"
-      name="timeScale"
-      id={`timeScale-${name}`}
-      value={value}
-      checked={numHoursShown === value}
-      onChange={e => setNumHoursShown(value)}
-    />
-    <StyledRadioLabel
+  return <button
+      tabIndex={0}
       style={{
-        backgroundColor: `${(numHoursShown === value) ? "var(--color-background-hue)" : "inherit"}`,
-        color: `${(numHoursShown === value) ? "var(--color-foreground-hue)" : "var(--color-text-2)"}`
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        margin: "0.5em 0",
+        padding: "0.5em 1.5em",
+        borderRadius: "10000px",
+        backgroundColor: (numHoursShown === value)
+          ? "var(--color-background-hue)"
+          : "inherit",
+        color: (numHoursShown === value)
+          ? "var(--color-foreground-hue)"
+          : "var(--color-text-2)"
       }}
-      htmlFor={`timeScale-${name}`}
+      onClick={e => setNumHoursShown(value)}
     >
-      {name}
-    </StyledRadioLabel>
-  </>
+      <h4
+        style={{
+          margin: "0",
+          pointerEvents: "none",
+        }}
+      >
+        {name}
+      </h4>
+  </button>
 }
 
 function Toggle({name, state, set}: {name: string, state: boolean, set: Dispatch<SetStateAction<boolean>>}) {
   return (
-    <div
+    <button
+      tabIndex={0}
       style={{
+        flexGrow: 1,
+        flexBasis: 0,
+        minWidth: "max-content",
+        cursor: "pointer",
         display: "flex",
         alignItems: "center",
+        padding: "0.5em 1.5em",
+        border: "none",
+        color: state 
+          ? "var(--color-foreground-hue)" 
+          : "var(--color-text-2)",
+        // background: "none",
+        backgroundColor: state 
+          ? "var(--color-background-hue)" 
+          : "inherit",
+        borderRadius: "10px",
       }}
+      onClick={e => set(!state)}
     >
       <input
-        style={{ pointerEvents: "none" }}
+        tabIndex={-1}
+        style={{
+          pointerEvents: "none",
+          marginRight: "1em",
+        }}
         type="checkbox"
         name="with"
         id={`with-${name}`}
         checked={state}
-        onChange={e => set(!state)}
       />
-      <StyledRadioLabel
+      <h4
         style={{
-          color: `var(--color-text-2)`
+          pointerEvents: "none",
+          borderRadius: "1000px",
+          margin: "0",
         }}
-        htmlFor={`with-${name}`}
       >
         {name}
-      </StyledRadioLabel>
-    </div>
+      </h4>
+    </button>
   )
 }
 
-const StyledRadioLabel = styled.label`
-  border-radius: 1000px;
-  margin: 0.5em 0;
-  padding: 0.1em 0.7em;
-`
 
 function findPrice(
   data: DataEntries,
