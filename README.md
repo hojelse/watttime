@@ -1,4 +1,4 @@
-# Strømmen.dk
+# watttime.dk
 
 Chart of electricity prices in the capital region of Copenhagen, Denmark.
 
