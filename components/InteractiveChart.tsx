@@ -320,7 +320,7 @@ function Header({data, highlightTime, currTime}: {data: { date: Date; price: num
           margin: "0",
         }}
       >
-        {Math.floor(findPrice(data, highlightTime ?? currTime) ?? 0)}
+        {Math.round(findPrice(data, highlightTime ?? currTime) ?? 0)}
       </h1>
       <h4
         style={{
@@ -489,7 +489,7 @@ function MinText({ xScale, yScale, minPriceItem }: { xScale: TypeXScale, minPric
       x={xScale(minPriceItem.date)}
       y={yScale(minPriceItem.price)}
     >
-      {`ØRE ${Math.floor(minPriceItem.price)}`}
+      {`ØRE ${Math.round(minPriceItem.price)}`}
     </text>
   )
 }
@@ -506,7 +506,7 @@ function MaxText({ xScale, yScale, maxPriceItem }: { xScale: TypeXScale, maxPric
     x={xScale(maxPriceItem.date)}
     y={yScale(maxPriceItem.price)}
   >
-    {`ØRE ${Math.floor(maxPriceItem.price)}`}
+    {`ØRE ${Math.round(maxPriceItem.price)}`}
   </text>;
 }
 
