@@ -14,6 +14,13 @@
   --color-background-3: hsl(0, 0%, 5%);
   --color-background-2: hsl(0, 0%, 5%);
   --color-background: hsl(0, 0%, 5%);
+
+  --c-purple-dark: #232226;
+  --c-purple-mid: #333237;
+  --c-purple-light: #47464D;
+  --c-yellow-dark: #666561;
+  --c-yellow-mid: #E8CA28;
+  --c-yellow-light: #D1D0C6;
 }
 
 /* @media (prefers-color-scheme: light) {
