@@ -136,11 +136,11 @@ const LandingPage: NextPage = () => {
 }
 
 const landingPageGraphic = <svg xmlns="http://www.w3.org/2000/svg" width="514.865" height="378" viewBox="0 0 514.865 378">
-<line id="Line_1" data-name="Line 1" y1="378" transform="translate(1)" fill="none" stroke="#47464d" stroke-width="2" stroke-dasharray="30 50"/>
-<line id="Line_2" data-name="Line 2" y1="378" transform="translate(513.865)" fill="none" stroke="#47464d" stroke-width="2" stroke-dasharray="30 50"/>
-<line id="Line_3" data-name="Line 3" y1="378" transform="translate(330.865)" fill="none" stroke="#47464d" stroke-width="2" stroke-dasharray="30 50"/>
-<line id="Line_4" data-name="Line 4" y1="378" transform="translate(173.865)" fill="none" stroke="#47464d" stroke-width="2" stroke-dasharray="30 50"/>
-<path id="Path_10" data-name="Path 10" d="M591.07,77.835l-172.053,59.12L259.011,62.823l-171.2,66.493,9.909-52.87L260.548,10.967l163.12,73.749L600.98,24.957Z" transform="translate(-87.115 111.533)" fill="#e8ca28"/>
+<line y1="378" transform="translate(1)" fill="none" stroke="#47464d" strokeWidth="2" strokeDasharray="30 50"/>
+<line y1="378" transform="translate(513.865)" fill="none" stroke="#47464d" strokeWidth="2" strokeDasharray="30 50"/>
+<line y1="378" transform="translate(330.865)" fill="none" stroke="#47464d" strokeWidth="2" strokeDasharray="30 50"/>
+<line y1="378" transform="translate(173.865)" fill="none" stroke="#47464d" strokeWidth="2" strokeDasharray="30 50"/>
+<path d="M591.07,77.835l-172.053,59.12L259.011,62.823l-171.2,66.493,9.909-52.87L260.548,10.967l163.12,73.749L600.98,24.957Z" transform="translate(-87.115 111.533)" fill="#e8ca28"/>
 </svg>
 
 
