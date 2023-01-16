@@ -31,6 +31,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="apple-touch-icon" href="/apple-icon.png"></link>
         <meta name="theme-color" content="hsl(0, 0%, 5%)" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+        <link rel="stylesheet" href="https://use.typekit.net/ubj3mvr.css" />
       </Head>
       <Component {...pageProps} />
   </>
