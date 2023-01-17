@@ -13,17 +13,17 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
         <meta name="description" content="Description" />
         <meta name="keywords" content="Keywords" />
-        <title>Strømmen</title>
+        <title>Watttime</title>
 
         <link rel="manifest" href="/manifest.json" />
         <link
-          href="/icons/favicon-16x16.png"
+          href="/icons/watttime-icon-16x16.png"
           rel="icon"
           type="image/png"
           sizes="16x16"
         />
         <link
-          href="/icons/favicon-32x32.png"
+          href="/icons/watttime-icon-32x32.png"
           rel="icon"
           type="image/png"
           sizes="32x32"
