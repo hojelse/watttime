@@ -48,6 +48,8 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
   const [withNetTarif, setWithNetTarif] = useState(true)
   const [withVAT, setWithVAT] = useState(true)
 
+  const [fixedBaseline, setFixedBaseline] = useState(false)
+
   const compositePrices = useMemo(() => (
     dataEntries.map(({ date, marketPrice, electricityTax: elafgift, netTarif, vat }) => {
       let price = 0
@@ -88,17 +90,20 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
 
   const boundPadding = 50
 
-  const yScale = useMemo(() => (
-    d3.scaleLinear()
-    .domain([maxPrice, minPrice])
-    .range([boundPadding, -boundPadding + dms.boundedHeight])
-  ), [maxPrice, minPrice, dms])
+  const minPrice_fixedBaseLine = (minPrice < 0) ? minPrice : 0
+  const priceBaseLine = fixedBaseline
+    ? minPrice_fixedBaseLine
+    : minPrice
 
-  const xScale = useMemo(() => (
+  const yScale =
+    d3.scaleLinear()
+      .domain([maxPrice, priceBaseLine])
+      .range([boundPadding, -boundPadding + dms.boundedHeight])
+
+  const xScale =
     d3.scaleTime()
-    .domain([beginDate, addHours(1, maxDate)])
-    .range([0, dms.boundedWidth])
-  ), [maxDate, beginDate, dms])
+      .domain([beginDate, addHours(1, maxDate)])
+      .range([0, dms.boundedWidth])
 
   const [highlightOffset, setHighlightOffset] = useState<number | undefined>(undefined)
   const highlightTime = (highlightOffset) ? xScale.invert(highlightOffset) : undefined
@@ -255,12 +260,12 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             cursor: "pointer",
             margin: "0.5em 0",
             padding: "0.5em 1.5em 0.2em 1.5em",
-            borderRadius: "10000px",
+            borderRadius: "10px",
             backgroundColor: openSettings
-              ? "var(--c-purple-mid)"
+              ? "var(--c-yellow-mid)"
               : "inherit",
             fill: openSettings
-              ? "var(--c-yellow-mid)"
+              ? "var(--c-purple-mid)"
               : "var(--c-yellow-dark)"
           }}
           onClick={e => setOpenSettings(!openSettings)}
@@ -273,9 +278,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             width: "2px",
             backgroundColor: "var(--c-purple-mid)"
           }}
-        >
-
-        </div>
+        ></div>
         <DateRangeRadioButton
           name={"1Å"}
           value={24*30*12}
@@ -332,8 +335,28 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
         </div>
         <div
           style={{
+            marginBottom: "1em",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+          }}
+        >
+          <p
+            style={{
+              margin: "0",
+              padding: "0",
+              color: "var(--c-yellow-light)",
+              fontSize: "1em",
+            }}
+          >
+            Price Composition
+          </p>
+        </div>
+        <div
+          style={{
             display: "flex",
             justifyContent: "space-around",
+            marginBottom: "1em",
             gap: "1em",
             alignItems: "center",
             flexWrap: "wrap"
@@ -360,6 +383,40 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             set={setWithVAT}
           />
         </div>
+        <div
+          style={{
+            marginBottom: "1em",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+          }}
+        >
+          <p
+            style={{
+              margin: "0",
+              padding: "0",
+              color: "var(--c-yellow-light)",
+              fontSize: "1em",
+            }}
+          >
+            Display Options
+          </p>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            gap: "1em",
+            alignItems: "center",
+            flexWrap: "wrap"
+          }}
+        >
+          <Toggle
+            name={"Fixed price axis baseline"}
+            state={fixedBaseline}
+            set={setFixedBaseline}
+          />
+        </div>
       </div>
     </div>
   )
@@ -372,9 +429,7 @@ function Header({data, highlightTime, currTime}: {data: { date: Date; price: num
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      padding: "2em 0em 1em 0em",
-      // flexWrap: "wrap",
-      // backgroundColor: "#eee",
+      padding: "1em 0em 1em 0em",
       borderRadius: "0 0 1.5em 1.5em"
     }}
   >
@@ -583,44 +638,6 @@ function MaxText({ xScale, yScale, maxPriceItem, xclamp }: { xScale: TypeXScale,
     {`ØRE ${Math.round(maxPriceItem.price)}`}
   </text>;
 }
-
-// function StepGradient({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
-//   const stepCurve = createStepCurve(data, xScale, yScale)
-
-//   const closedStepCurve = stepCurve + " " + [
-//     "V", yScale(0),
-//     "H", xScale(data[0].date),
-//     "Z"
-//   ].join(" ")
-
-//   return (
-//     <>
-//       <path
-//         d={closedStepCurve}
-//         fill="url(#Gradient1)"
-//         mask="url(#fade)"
-//       />
-//       <defs>
-//         <linearGradient id="Gradient1">
-//           <stop offset="0%"   stopColor="hsl(250,72%,27%)" />
-//           <stop offset="20%"  stopColor="hsl(252,75%,32%)" />
-//           <stop offset="30%"  stopColor="hsl(260,89%,40%)" />
-//           <stop offset="50%"  stopColor="hsl(277,85%,45%)" />
-//           <stop offset="70%"  stopColor="hsl(294,75%,45%)" />
-//           <stop offset="80%"  stopColor="hsl(327,55%,62%)" />
-//           <stop offset="100%" stopColor="hsl(307,41%,68%)" />
-//         </linearGradient>
-//         <linearGradient id="fadeGrad" y2="1" x2="0">
-//           <stop offset="0%" stopColor="white" stopOpacity="1"/>
-//           <stop offset="100%" stopColor="white" stopOpacity="0"/>
-//         </linearGradient>
-//         <mask id="fade" maskContentUnits="objectBoundingBox">
-//           <rect width="1" height="1" fill="url(#fadeGrad)"/>
-//         </mask>
-//       </defs>
-//     </>
-//   )
-// }
 
 function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
 
