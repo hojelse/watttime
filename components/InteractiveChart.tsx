@@ -105,7 +105,10 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
 
   const setStuff = (e: PointerEvent) => {
     const rect = boundArea.current?.getBoundingClientRect()
-    setHighlightOffset((rect) ? e.clientX - (rect.left) : undefined)
+    const offset = rect
+      ? Math.max(0, Math.min(rect.right-0.1-rect.left, e.clientX - rect.left))
+      : undefined
+    setHighlightOffset(offset)
   }
 
   boundArea.current?.addEventListener("pointerdown", e => {
