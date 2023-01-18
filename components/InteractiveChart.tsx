@@ -103,10 +103,17 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
   const [highlightOffset, setHighlightOffset] = useState<number | undefined>(undefined)
   const highlightTime = (highlightOffset) ? xScale.invert(highlightOffset) : undefined
 
+  const canvas_bound_area = boundArea.current?.getBoundingClientRect()
+  const xclamp = (x: number) => {
+    const s = 30
+    return canvas_bound_area
+      ? Math.max(s, Math.min(canvas_bound_area.right-s-canvas_bound_area.left, x))
+      : x
+  }
   const setStuff = (e: PointerEvent) => {
-    const rect = boundArea.current?.getBoundingClientRect()
-    const offset = rect
-      ? Math.max(0, Math.min(rect.right-0.1-rect.left, e.clientX - rect.left))
+    const s = 0.1
+    const offset = canvas_bound_area
+      ? Math.max(s, Math.min(canvas_bound_area.right-s-canvas_bound_area.left, e.clientX - canvas_bound_area.left))
       : undefined
     setHighlightOffset(offset)
   }
@@ -184,11 +191,13 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
                 xScale={xScale}
                 yScale={yScale}
                 minPriceItem={minPriceItem}
+                xclamp={xclamp}
               />
               <MaxText
                 xScale={xScale}
                 yScale={yScale}
                 maxPriceItem={maxPriceItem}
+                xclamp={xclamp}
               />
               <StepCurve
                 xScale={xScale}
@@ -478,7 +487,7 @@ function YAxis({dms, yScale}: {dms: NewChartSettings, yScale: TypeYScale}) {
   )
 }
 
-function MinText({ xScale, yScale, minPriceItem }: { xScale: TypeXScale, minPriceItem: { date: Date; price: number; }, yScale: TypeYScale }) {
+function MinText({ xScale, yScale, minPriceItem, xclamp }: { xScale: TypeXScale, minPriceItem: { date: Date; price: number; }, yScale: TypeYScale, xclamp: (x: number) => number }) {
   return (
     <text
       style={{
@@ -489,7 +498,7 @@ function MinText({ xScale, yScale, minPriceItem }: { xScale: TypeXScale, minPric
         fill: "var(--color-text-2)",
         pointerEvents: "none"
       }}
-      x={xScale(minPriceItem.date)}
+      x={xclamp(xScale(minPriceItem.date))}
       y={yScale(minPriceItem.price)}
     >
       {`ØRE ${Math.round(minPriceItem.price)}`}
@@ -497,7 +506,7 @@ function MinText({ xScale, yScale, minPriceItem }: { xScale: TypeXScale, minPric
   )
 }
 
-function MaxText({ xScale, yScale, maxPriceItem }: { xScale: TypeXScale, maxPriceItem: { date: Date; price: number; }, yScale: TypeYScale }) {
+function MaxText({ xScale, yScale, maxPriceItem, xclamp }: { xScale: TypeXScale, maxPriceItem: { date: Date; price: number; }, yScale: TypeYScale, xclamp: (x: number) => number }) {
   return <text
     style={{
       transform: "translateY(-20px)",
@@ -506,7 +515,7 @@ function MaxText({ xScale, yScale, maxPriceItem }: { xScale: TypeXScale, maxPric
       fill: "var(--color-text-2)",
       pointerEvents: "none"
     }}
-    x={xScale(maxPriceItem.date)}
+    x={xclamp(xScale(maxPriceItem.date))}
     y={yScale(maxPriceItem.price)}
   >
     {`ØRE ${Math.round(maxPriceItem.price)}`}
