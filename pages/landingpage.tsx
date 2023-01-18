@@ -1,5 +1,6 @@
 import { max } from "d3"
 import { NextPage } from "next"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 
 const LandingPage: NextPage = () => {
@@ -50,7 +51,9 @@ const LandingPage: NextPage = () => {
           fontSize: "1em",
         }}
       >
-        about
+        <Link href="/about">
+          about
+        </Link>
       </button>
       <button
         style={{
@@ -63,7 +66,9 @@ const LandingPage: NextPage = () => {
           fontSize: "1em",
         }}
       >
-        sources
+        <Link href="/sources">
+          sources
+        </Link>
       </button>
       <button
         style={{
@@ -79,7 +84,9 @@ const LandingPage: NextPage = () => {
           fontStyle: "normal",
         }}
       >
-        try me
+        <Link href="/">
+          try me
+        </Link>
       </button>
     </nav>
     <main
@@ -179,7 +186,9 @@ const LandingPage: NextPage = () => {
             fontStyle: "normal",
           }}
         >
-          find out
+          <Link href="/">
+            find out
+          </Link>
         </button>
       </div>
       <div
@@ -209,22 +218,10 @@ const LandingPage: NextPage = () => {
           color: "var(--c-yellow-dark)"
         }}
       >
-        <p
-          style={{
-            fontFamily: "sofia-pro,sans-serif",
-            fontWeight: 400,
-            fontStyle: "normal",
-          }}
-        >
+        <p>
           github
         </p>
-        <p
-          style={{
-            fontFamily: "sofia-pro,sans-serif",
-            fontWeight: 400,
-            fontStyle: "normal",
-          }}
-        >
+        <p>
           version 1.0.0
         </p>
       </footer>
