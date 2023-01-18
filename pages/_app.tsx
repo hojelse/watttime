@@ -29,7 +29,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           sizes="32x32"
         />
         <link rel="apple-touch-icon" href="/apple-icon.png"></link>
-        <meta name="theme-color" content="hsl(0, 0%, 5%)" />
+        <meta name="theme-color" content="#232226" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
         <link rel="stylesheet" href="https://use.typekit.net/ubj3mvr.css" />
       </Head>
