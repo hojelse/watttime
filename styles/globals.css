@@ -3,17 +3,11 @@
   --chart-divider-width: 0.002;
   --color-hue: 210;
   
-  --color-foreground-hue: hsl(210, 100%, 50%);
-
-  --color-foreground: hsl(0, 0%, 100%);
-  --color-text: hsl(0, 0%, 86%);
-  --color-text-2: hsl(0, 0%, 100%, 0.5);
+  --color-text: var(--c-yellow-light);
+  --color-text-2: var(--c-yellow-light);
   --color-text-3: hsla(0, 0%, 100%, 0.1);
-  --color-background-hue: hsl(210, 100%, 12%);
-  --color-background-4: hsl(0, 0%, 5%);
-  --color-background-3: hsl(0, 0%, 5%);
-  --color-background-2: hsl(0, 0%, 5%);
-  --color-background: hsl(0, 0%, 5%);
+  --color-background-4: var(--c-purple-dark);
+  --color-background: var(--c-purple-dark);
 
   --c-purple-dark: #232226;
   --c-purple-mid: #333237;
@@ -22,20 +16,6 @@
   --c-yellow-mid: #E8CA28;
   --c-yellow-light: #D1D0C6;
 }
-
-/* @media (prefers-color-scheme: light) {
-  :root {
-    --color-foreground: hsl(0, 0%, 100%);
-    --color-text: hsl(0, 0%, 10%);
-    --color-text-2: hsl(0, 0%, 10%, 0.8);
-    --color-text-3: hsla(0, 0%, 10%, 0.1);
-    --color-background-hue: hsl(210, 100%, 90%);
-    --color-background-4: hsl(0, 0%, 100%);
-    --color-background-3: hsl(0, 0%, 100%);
-    --color-background-2: hsl(0, 0%, 100%);
-    --color-background: hsl(0, 0%, 100%);
-  }
-} */
 
 html,
 body {
@@ -69,4 +49,11 @@ a {
 
 .page > * {
   padding: 0 10px
+}
+
+p, text {
+  font-family: sofia-pro,sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.2em;
 }

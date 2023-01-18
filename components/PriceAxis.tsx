@@ -34,11 +34,11 @@ export const PriceAxis = ({ dms, domain, range }: ArgType) => {
           <line
             x1={-6}
             x2={dms.boundedWidth}
-            stroke="var(--color-text-3)"
+            stroke="var(--c-purple-mid)"
           />
           <text
             key={value}
-            fill="var(--color-text-2)"
+            fill="var(--c-yellow-dark)"
             style={{
               fontSize: "10px",
               textAnchor: "middle",

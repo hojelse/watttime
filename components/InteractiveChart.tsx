@@ -143,6 +143,8 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
     };
   }, [currTime]);
 
+  const [openSettings, setOpenSettings] = useState(false)
+
   return (
     <div
       style={{
@@ -174,6 +176,15 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
                     <rect x={0} y={0} width={dms.boundedWidth} height={dms.boundedHeight} />
                 </clipPath>
             </defs>
+            <XAxis
+              xScale={xScale}
+              dms={dms}
+              numHoursShown={numHoursShown}
+            />
+            <YAxis
+              yScale={yScale}
+              dms={dms}
+            />
             <g
               transform={`translate(${[
                 dms.marginLeft,
@@ -181,11 +192,11 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
               ].join(",")})`}
               clipPath="url(#clipPath)"
             >
-              <rect
+              <rect // transparent touch target
                 ref={boundArea}
                 width={dms.boundedWidth}
                 height={dms.boundedHeight}
-                fill="var(--color-background-4)"
+                fillOpacity="0"
               />
               <MinText
                 xScale={xScale}
@@ -226,15 +237,6 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
                 }}
               />
             </g>
-            <XAxis
-              xScale={xScale}
-              dms={dms}
-              numHoursShown={numHoursShown}
-            />
-            <YAxis
-              yScale={yScale}
-              dms={dms}
-            />
           </svg>
         </div>
       </div>
@@ -245,6 +247,35 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           flexWrap: "wrap"
         }}
       >
+        <button
+          tabIndex={0}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            margin: "0.5em 0",
+            padding: "0.5em 1.5em 0.2em 1.5em",
+            borderRadius: "10000px",
+            backgroundColor: openSettings
+              ? "var(--c-purple-mid)"
+              : "inherit",
+            fill: openSettings
+              ? "var(--c-yellow-mid)"
+              : "var(--c-yellow-dark)"
+          }}
+          onClick={e => setOpenSettings(!openSettings)}
+        >
+          {settings_icon}
+        </button>
+        <div
+          style={{
+            height: "100%",
+            width: "2px",
+            backgroundColor: "var(--c-purple-mid)"
+          }}
+        >
+
+        </div>
         <DateRangeRadioButton
           name={"1Å"}
           value={24*30*12}
@@ -272,34 +303,63 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
       </div>
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-around",
-          gap: "1em",
-          alignItems: "center",
-          padding: "1em 0em 1em 0em",
-          flexWrap: "wrap"
+          backgroundColor: "var(--c-purple-mid)",
+          marginTop: "1em",
+          padding: "1em",
+          borderRadius: "10px",
+          display: openSettings
+            ? "grid"
+            : "none"
         }}
       >
-        <Toggle
-          name={"Markedspris"}
-          state={withMarketPrice}
-          set={setWithMarketPrice}
-        />
-        <Toggle
-          name={"Elafgift"}
-          state={withElafgift}
-          set={setWithElafgift}
-        />
-        <Toggle
-          name={"Radius Nettarif"}
-          state={withNetTarif}
-          set={setWithNetTarif}
-        />
-        <Toggle
-          name={"Moms"}
-          state={withVAT}
-          set={setWithVAT}
-        />
+        <div
+          style={{
+            marginBottom: "1em",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+          }}
+        >
+          <p
+            style={{
+              margin: "0",
+              padding: "0",
+              color: "var(--c-yellow-light)",
+            }}
+          >
+            Settings
+          </p>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            gap: "1em",
+            alignItems: "center",
+            flexWrap: "wrap"
+          }}
+        >
+          <Toggle
+            name={"Markedspris"}
+            state={withMarketPrice}
+            set={setWithMarketPrice}
+          />
+          <Toggle
+            name={"Elafgift"}
+            state={withElafgift}
+            set={setWithElafgift}
+          />
+          <Toggle
+            name={"Radius Nettarif"}
+            state={withNetTarif}
+            set={setWithNetTarif}
+          />
+          <Toggle
+            name={"Moms"}
+            state={withVAT}
+            set={setWithVAT}
+          />
+        </div>
       </div>
     </div>
   )
@@ -326,35 +386,37 @@ function Header({data, highlightTime, currTime}: {data: { date: Date; price: num
         gap: "0.5em"
       }}
     >
-      <h1
+      <p
         style={{
           color: "var(--color-text)",
           margin: "0",
+          fontSize: "2em",
         }}
       >
         {Math.round(findPrice(data, highlightTime ?? currTime) ?? 0)}
-      </h1>
-      <h4
+      </p>
+      <p
         style={{
           color: "var(--color-text)",
           margin: "0",
         }}
       >
         øre kWh
-      </h4>
+      </p>
     </div>
-    <h4
+    <p
       style={{
         color: "var(--color-text)",
-        margin: "0"
+        margin: "0",
       }}
     >
       {myFormat(highlightTime ?? currTime)}
-    </h4>
+    </p>
   </div>;
 }
 
 function DateRangeRadioButton({name, value, numHoursShown, setNumHoursShown}: {name: string, value: number, numHoursShown: number, setNumHoursShown: Dispatch<SetStateAction<number>>}) {
+  const isActive = numHoursShown == value
   return <button
       tabIndex={0}
       style={{
@@ -364,23 +426,23 @@ function DateRangeRadioButton({name, value, numHoursShown, setNumHoursShown}: {n
         margin: "0.5em 0",
         padding: "0.5em 1.5em",
         borderRadius: "10000px",
-        backgroundColor: (numHoursShown === value)
-          ? "var(--color-background-hue)"
+        backgroundColor: isActive
+          ? "var(--c-purple-mid)"
           : "inherit",
-        color: (numHoursShown === value)
-          ? "var(--color-foreground-hue)"
-          : "var(--color-text-2)"
+        color: isActive
+          ? "var(--c-yellow-mid)"
+          : "var(--c-yellow-dark)"
       }}
       onClick={e => setNumHoursShown(value)}
     >
-      <h4
+      <p
         style={{
           margin: "0",
           pointerEvents: "none",
         }}
       >
         {name}
-      </h4>
+      </p>
   </button>
 }
 
@@ -397,29 +459,30 @@ function Toggle({name, state, set}: {name: string, state: boolean, set: Dispatch
         alignItems: "center",
         padding: "0.5em 1.5em",
         border: "none",
-        color: state 
-          ? "var(--color-foreground-hue)" 
-          : "var(--color-text-2)",
-        // background: "none",
-        backgroundColor: state 
-          ? "var(--color-background-hue)" 
-          : "inherit",
+        color: state
+          ? "var(--c-purple-mid)"
+          : "var(--c-yellow-dark)",
+        backgroundColor: state
+          ? "var(--c-yellow-mid)"
+          : "var(--c-purple-dark)",
         borderRadius: "10px",
       }}
       onClick={e => set(!state)}
     >
-      <input
-        tabIndex={-1}
+      {/* <div
         style={{
           pointerEvents: "none",
-          marginRight: "1em",
+          margin: "0 1em 0 0",
+          padding: "0",
         }}
-        type="checkbox"
-        name="with"
-        id={`with-${name}`}
-        checked={state}
-      />
-      <h4
+      >
+        {
+          state
+          ? checkbox_active
+          : checkbox_inactive
+        }
+      </div> */}
+      <p
         style={{
           pointerEvents: "none",
           borderRadius: "1000px",
@@ -427,11 +490,10 @@ function Toggle({name, state, set}: {name: string, state: boolean, set: Dispatch
         }}
       >
         {name}
-      </h4>
+      </p>
     </button>
   )
 }
-
 
 function findPrice(
   data: DataEntries,
@@ -569,7 +631,7 @@ function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXS
       <path
         d={stepCurve}
         fill="none"
-        stroke="var(--color-foreground-hue)"
+        stroke="var(--c-yellow-mid)"
         strokeWidth={2}
         strokeLinecap="round"
         style={{
@@ -600,3 +662,13 @@ function roundDecimal(num: number, decimals: number) {
   const factor = Math.pow(10, decimals)
   return Math.round(num * factor) / factor
 }
+
+const settings_icon = <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 48 48"><path d="m18.3 45.25-1.05-6.7q-.65-.2-1.475-.675-.825-.475-1.375-.925l-6.25 2.9-5.8-10.25 5.7-4.15q-.05-.3-.075-.725Q7.95 24.3 7.95 24t.025-.725q.025-.425.075-.725l-5.7-4.2L8.15 8.2l6.35 2.85q.5-.4 1.3-.85.8-.45 1.45-.65L18.3 2.7h11.4l1.05 6.8q.65.25 1.475.675.825.425 1.375.875l6.3-2.85 5.75 10.15-5.75 4.1q.05.35.1.775.05.425.05.775 0 .35-.05.75t-.1.75l5.75 4.1-5.8 10.25-6.3-2.9q-.55.45-1.325.925-.775.475-1.475.675l-1.05 6.7Zm5.6-14.75q2.7 0 4.6-1.9 1.9-1.9 1.9-4.6 0-2.7-1.9-4.6-1.9-1.9-4.6-1.9-2.7 0-4.6 1.9-1.9 1.9-1.9 4.6 0 2.7 1.9 4.6 1.9 1.9 4.6 1.9Z"/></svg>
+
+const checkbox_active = <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 42 42">
+  <path fill="var(--c-purple-dark)" d="M20.95 31.95 35.4 17.5l-2.15-2.15-12.3 12.3L15 21.7l-2.15 2.15ZM9 42q-1.2 0-2.1-.9Q6 40.2 6 39V9q0-1.2.9-2.1Q7.8 6 9 6h30q1.2 0 2.1.9.9.9.9 2.1v30q0 1.2-.9 2.1-.9.9-2.1.9Zm0-3h30V9H9v30ZM9 9v30V9Z"/>
+</svg>
+
+const checkbox_inactive = <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 42 42">
+  <path fill="var(--c-yellow-light)" d="M9 42q-1.2 0-2.1-.9Q6 40.2 6 39V9q0-1.2.9-2.1Q7.8 6 9 6h30q1.2 0 2.1.9.9.9.9 2.1v30q0 1.2-.9 2.1-.9.9-2.1.9Zm0-3h30V9H9v30Z"/>
+</svg>

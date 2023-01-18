@@ -42,7 +42,7 @@ export const DateAxis = ({ dms, domain, range, numHoursShown }: ArgType) => {
           <line
             y1={-6}
             y2={dms.boundedHeight}
-            stroke="var(--color-text-3)"
+            stroke="var(--c-purple-mid)"
           />
 
           {
@@ -87,7 +87,7 @@ export const DateAxis = ({ dms, domain, range, numHoursShown }: ArgType) => {
 function HourText(value: Date) {
   return <text
     key={"hour-" + value.toISOString()}
-    fill="var(--color-text-2)"
+    fill="var(--c-yellow-dark)"
     style={{
       fontSize: "10px",
       textAnchor: "middle",
@@ -110,7 +110,7 @@ function hourFormat(date: Date) {
 function DayNumberText(value: Date) {
   return <text
     key={"dayNumber-" + value.toISOString()}
-    fill="var(--color-text-2)"
+    fill="var(--c-yellow-dark)"
     style={{
       fontSize: "10px",
       textAnchor: "middle",
@@ -130,7 +130,7 @@ function dayNumberFormat(date: Date) {
 function WeekDayText(value: Date) {
   return <text
     key={"weekday-" + value.toISOString()}
-    fill="var(--color-text-2)"
+    fill="var(--c-yellow-dark)"
     style={{
       fontSize: "10px",
       textAnchor: "middle",
@@ -150,7 +150,7 @@ function weekDayFormat(date: Date) {
 function MonthText(value: Date) {
   return <text
     key={"month-" + value.toISOString()}
-    fill="var(--color-text-2)"
+    fill="var(--c-yellow-dark)"
     style={{
       fontSize: "10px",
       textAnchor: "middle",
