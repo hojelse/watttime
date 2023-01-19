@@ -42,6 +42,7 @@ const localeFormat : Intl.DateTimeFormatOptions = {
 }
 
 export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated }) => {
+  const [currTime, setCurrTime] = useState(new Date())
 
   const [withMarketPrice, setWithMarketPrice] = useState(true)
   const [withElafgift, setWithElafgift] = useState(true)
@@ -66,8 +67,6 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
 
   const passedData = compositePrices
 
-  const [numHoursShown, setNumHoursShown] = useState(48)
-
   const boundArea = useRef<SVGRectElement>(null)
 
   const [ref, dms] = useChartDimensions(chartSettings)
@@ -75,6 +74,10 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
   const data = useMemo(() => (
     passedData.slice().reverse()
   ), [passedData])
+
+  let hoursInFuture = 2 + Math.floor((data[data.length-1].date.getTime() - currTime.getTime())/1000/60/60)
+  
+  const [numHoursShown, setNumHoursShown] = useState(hoursInFuture)
 
   const shownData = data.slice().splice(data.length - numHoursShown)
 
@@ -86,7 +89,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
   const minDate = shownData[0].date
   const maxDate = shownData[shownData.length-1].date
 
-  const beginDate = addHours(1-numHoursShown, maxDate);
+  const beginDate = addHours(1-numHoursShown, maxDate)
 
   const boundPadding = 50
 
@@ -135,7 +138,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
     }, {once: true})
   }, {once: true})
 
-  const [currTime, setCurrTime] = useState(new Date())
+  
   const currOffset = xScale(currTime)
   const refreshStuff = () => {
     setCurrTime(new Date())
@@ -299,7 +302,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
         />
         <DateRangeRadioButton
           name={"Future"}
-          value={Math.floor(1+(maxDate.getTime() - currTime.getTime())/1000/60/60)}
+          value={hoursInFuture}
           numHoursShown={numHoursShown}
           setNumHoursShown={setNumHoursShown}
         />
