@@ -44,6 +44,15 @@ const localeFormat : Intl.DateTimeFormatOptions = {
 export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated }) => {
   const [currTime, setCurrTime] = useState(new Date())
 
+  const refreshStuff = () => { setCurrTime(new Date()) }
+
+  useEffect(() => {
+    const timerId = setInterval(refreshStuff, 100);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
+  }, [currTime]);
+
   const [withMarketPrice, setWithMarketPrice] = useState(true)
   const [withElafgift, setWithElafgift] = useState(true)
   const [withNetTarif, setWithNetTarif] = useState(true)
@@ -138,18 +147,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
     }, {once: true})
   }, {once: true})
 
-  
   const currOffset = xScale(currTime)
-  const refreshStuff = () => {
-    setCurrTime(new Date())
-  }
-
-  useEffect(() => {
-    const timerId = setInterval(refreshStuff, 1000);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
-  }, [currTime]);
 
   const [openSettings, setOpenSettings] = useState(false)
 
