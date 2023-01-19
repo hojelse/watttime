@@ -280,7 +280,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           }}
         ></div>
         <DateRangeRadioButton
-          name={"1Å"}
+          name={"1Y"}
           value={24*30*12}
           numHoursShown={numHoursShown}
           setNumHoursShown={setNumHoursShown}
@@ -292,14 +292,14 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           setNumHoursShown={setNumHoursShown}
         />
         <DateRangeRadioButton
-          name={"1U"}
+          name={"1W"}
           value={24*7}
           numHoursShown={numHoursShown}
           setNumHoursShown={setNumHoursShown}
         />
         <DateRangeRadioButton
-          name={"48T"}
-          value={48}
+          name={"Future"}
+          value={Math.floor(1+(maxDate.getTime() - currTime.getTime())/1000/60/60)}
           numHoursShown={numHoursShown}
           setNumHoursShown={setNumHoursShown}
         />
