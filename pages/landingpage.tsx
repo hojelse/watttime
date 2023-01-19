@@ -92,7 +92,7 @@ const LandingPage: NextPage = () => {
     <main
       style={{
         minHeight: "100vh",
-        backgroundColor: "var(--c-purple-dark)",
+        backgroundColor: "var(--color-background)",
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
         padding: "0 5em",
