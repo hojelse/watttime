@@ -90,9 +90,9 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
 
   const shownData = data.slice().splice(data.length - numHoursShown)
 
-  const minPriceItem = shownData.reduce((prev, curr) => (prev.price < curr.price) ? prev : curr);
+  const minPriceItem = shownData.reduce((prev, curr) => (prev.price < curr.price) ? prev : curr, {date: new Date(), price: Number.MAX_SAFE_INTEGER});
   const minPrice = minPriceItem.price
-  const maxPriceItem = shownData.reduce((prev, curr) => (prev.price > curr.price) ? prev : curr);
+  const maxPriceItem = shownData.reduce((prev, curr) => (prev.price > curr.price) ? prev : curr, {date: new Date(), price: Number.MIN_SAFE_INTEGER});
   const maxPrice = maxPriceItem.price
 
   const minDate = shownData[0].date
