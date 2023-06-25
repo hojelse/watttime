@@ -58,7 +58,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
   const [withNetTarif, setWithNetTarif] = useState(true)
   const [withVAT, setWithVAT] = useState(true)
 
-  const [fixedBaseline, setFixedBaseline] = useState(false)
+  const [fixedBaseline, setFixedBaseline] = useState(true)
 
   const compositePrices = useMemo(() => (
     dataEntries.map(({ date, marketPrice, electricityTax: elafgift, netTarif, vat }) => {
@@ -334,7 +334,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             Settings
           </p>
         </div>
-        <div
+        {/* <div
           style={{
             marginBottom: "1em",
             display: "grid",
@@ -352,7 +352,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           >
             Price Composition
           </p>
-        </div>
+        </div> */}
         <div
           style={{
             display: "flex",
@@ -384,7 +384,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             set={setWithVAT}
           />
         </div>
-        <div
+        {/* <div
           style={{
             marginBottom: "1em",
             display: "grid",
@@ -417,7 +417,7 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
             state={fixedBaseline}
             set={setFixedBaseline}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   )
