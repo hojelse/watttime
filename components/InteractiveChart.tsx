@@ -42,11 +42,23 @@ const localeFormat : Intl.DateTimeFormatOptions = {
 }
 
 export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated }) => {
+  const [currTime, setCurrTime] = useState(new Date())
+
+  const refreshStuff = () => { setCurrTime(new Date()) }
+
+  useEffect(() => {
+    const timerId = setInterval(refreshStuff, 100);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
+  }, [currTime]);
 
   const [withMarketPrice, setWithMarketPrice] = useState(true)
   const [withElafgift, setWithElafgift] = useState(true)
   const [withNetTarif, setWithNetTarif] = useState(true)
   const [withVAT, setWithVAT] = useState(true)
+
+  const [fixedBaseline, setFixedBaseline] = useState(false)
 
   const compositePrices = useMemo(() => (
     dataEntries.map(({ date, marketPrice, electricityTax: elafgift, netTarif, vat }) => {
@@ -64,8 +76,6 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
 
   const passedData = compositePrices
 
-  const [numHoursShown, setNumHoursShown] = useState(48)
-
   const boundArea = useRef<SVGRectElement>(null)
 
   const [ref, dms] = useChartDimensions(chartSettings)
@@ -74,38 +84,55 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
     passedData.slice().reverse()
   ), [passedData])
 
+  let hoursInFuture = 2 + Math.floor((data[data.length-1].date.getTime() - currTime.getTime())/1000/60/60)
+  
+  const [numHoursShown, setNumHoursShown] = useState(hoursInFuture)
+
   const shownData = data.slice().splice(data.length - numHoursShown)
 
-  const minPriceItem = shownData.reduce((prev, curr) => (prev.price < curr.price) ? prev : curr);
+  const minPriceItem = shownData.reduce((prev, curr) => (prev.price < curr.price) ? prev : curr, {date: new Date(), price: Number.MAX_SAFE_INTEGER});
   const minPrice = minPriceItem.price
-  const maxPriceItem = shownData.reduce((prev, curr) => (prev.price > curr.price) ? prev : curr);
+  const maxPriceItem = shownData.reduce((prev, curr) => (prev.price > curr.price) ? prev : curr, {date: new Date(), price: Number.MIN_SAFE_INTEGER});
   const maxPrice = maxPriceItem.price
 
   const minDate = shownData[0].date
   const maxDate = shownData[shownData.length-1].date
 
-  const beginDate = addHours(1-numHoursShown, maxDate);
+  const beginDate = addHours(1-numHoursShown, maxDate)
 
   const boundPadding = 50
 
-  const yScale = useMemo(() => (
-    d3.scaleLinear()
-    .domain([maxPrice, minPrice])
-    .range([boundPadding, -boundPadding + dms.boundedHeight])
-  ), [maxPrice, minPrice, dms])
+  const minPrice_fixedBaseLine = (minPrice < 0) ? minPrice : 0
+  const priceBaseLine = fixedBaseline
+    ? minPrice_fixedBaseLine
+    : minPrice
 
-  const xScale = useMemo(() => (
+  const yScale =
+    d3.scaleLinear()
+      .domain([maxPrice, priceBaseLine])
+      .range([boundPadding, -boundPadding + dms.boundedHeight])
+
+  const xScale =
     d3.scaleTime()
-    .domain([beginDate, addHours(1, maxDate)])
-    .range([0, dms.boundedWidth])
-  ), [maxDate, beginDate, dms])
+      .domain([beginDate, addHours(1, maxDate)])
+      .range([0, dms.boundedWidth])
 
   const [highlightOffset, setHighlightOffset] = useState<number | undefined>(undefined)
   const highlightTime = (highlightOffset) ? xScale.invert(highlightOffset) : undefined
 
+  const canvas_bound_area = boundArea.current?.getBoundingClientRect()
+  const xclamp = (x: number) => {
+    const s = 30
+    return canvas_bound_area
+      ? Math.max(s, Math.min(canvas_bound_area.right-s-canvas_bound_area.left, x))
+      : x
+  }
   const setStuff = (e: PointerEvent) => {
-    const rect = boundArea.current?.getBoundingClientRect()
-    setHighlightOffset((rect) ? e.clientX - (rect.left) : undefined)
+    const s = 0.1
+    const offset = canvas_bound_area
+      ? Math.max(s, Math.min(canvas_bound_area.right-s-canvas_bound_area.left, e.clientX - canvas_bound_area.left))
+      : undefined
+    setHighlightOffset(offset)
   }
 
   boundArea.current?.addEventListener("pointerdown", e => {
@@ -120,18 +147,9 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
     }, {once: true})
   }, {once: true})
 
-  const [currTime, setCurrTime] = useState(new Date())
   const currOffset = xScale(currTime)
-  const refreshStuff = () => {
-    setCurrTime(new Date())
-  }
 
-  useEffect(() => {
-    const timerId = setInterval(refreshStuff, 1000);
-    return function cleanup() {
-      clearInterval(timerId);
-    };
-  }, [currTime]);
+  const [openSettings, setOpenSettings] = useState(false)
 
   return (
     <div
@@ -164,6 +182,15 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
                     <rect x={0} y={0} width={dms.boundedWidth} height={dms.boundedHeight} />
                 </clipPath>
             </defs>
+            <XAxis
+              xScale={xScale}
+              dms={dms}
+              numHoursShown={numHoursShown}
+            />
+            <YAxis
+              yScale={yScale}
+              dms={dms}
+            />
             <g
               transform={`translate(${[
                 dms.marginLeft,
@@ -171,21 +198,23 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
               ].join(",")})`}
               clipPath="url(#clipPath)"
             >
-              <rect
+              <rect // transparent touch target
                 ref={boundArea}
                 width={dms.boundedWidth}
                 height={dms.boundedHeight}
-                fill="var(--color-background-4)"
+                fillOpacity="0"
               />
               <MinText
                 xScale={xScale}
                 yScale={yScale}
                 minPriceItem={minPriceItem}
+                xclamp={xclamp}
               />
               <MaxText
                 xScale={xScale}
                 yScale={yScale}
                 maxPriceItem={maxPriceItem}
+                xclamp={xclamp}
               />
               <StepCurve
                 xScale={xScale}
@@ -214,15 +243,6 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
                 }}
               />
             </g>
-            <XAxis
-              xScale={xScale}
-              dms={dms}
-              numHoursShown={numHoursShown}
-            />
-            <YAxis
-              yScale={yScale}
-              dms={dms}
-            />
           </svg>
         </div>
       </div>
@@ -233,8 +253,35 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           flexWrap: "wrap"
         }}
       >
+        <button
+          tabIndex={0}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            margin: "0.5em 0",
+            padding: "0.5em 1.5em 0.2em 1.5em",
+            borderRadius: "10px",
+            backgroundColor: openSettings
+              ? "var(--c-yellow-mid)"
+              : "inherit",
+            fill: openSettings
+              ? "var(--c-purple-mid)"
+              : "var(--c-yellow-dark)"
+          }}
+          onClick={e => setOpenSettings(!openSettings)}
+        >
+          {settings_icon}
+        </button>
+        <div
+          style={{
+            height: "100%",
+            width: "2px",
+            backgroundColor: "var(--c-purple-mid)"
+          }}
+        ></div>
         <DateRangeRadioButton
-          name={"1Å"}
+          name={"1Y"}
           value={24*30*12}
           numHoursShown={numHoursShown}
           setNumHoursShown={setNumHoursShown}
@@ -246,48 +293,131 @@ export const InterativeChart = ({ dataEntries }: { dataEntries: MashTypeHydated 
           setNumHoursShown={setNumHoursShown}
         />
         <DateRangeRadioButton
-          name={"1U"}
+          name={"1W"}
           value={24*7}
           numHoursShown={numHoursShown}
           setNumHoursShown={setNumHoursShown}
         />
         <DateRangeRadioButton
-          name={"48T"}
-          value={48}
+          name={"Future"}
+          value={hoursInFuture}
           numHoursShown={numHoursShown}
           setNumHoursShown={setNumHoursShown}
         />
       </div>
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-around",
-          gap: "1em",
-          alignItems: "center",
-          padding: "1em 0em 1em 0em",
-          flexWrap: "wrap"
+          backgroundColor: "var(--c-purple-mid)",
+          marginTop: "1em",
+          padding: "1em",
+          borderRadius: "10px",
+          display: openSettings
+            ? "grid"
+            : "none"
         }}
       >
-        <Toggle
-          name={"Markedspris"}
-          state={withMarketPrice}
-          set={setWithMarketPrice}
-        />
-        <Toggle
-          name={"Elafgift"}
-          state={withElafgift}
-          set={setWithElafgift}
-        />
-        <Toggle
-          name={"Radius Nettarif"}
-          state={withNetTarif}
-          set={setWithNetTarif}
-        />
-        <Toggle
-          name={"Moms"}
-          state={withVAT}
-          set={setWithVAT}
-        />
+        <div
+          style={{
+            marginBottom: "1em",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+          }}
+        >
+          <p
+            style={{
+              margin: "0",
+              padding: "0",
+              color: "var(--c-yellow-light)",
+            }}
+          >
+            Settings
+          </p>
+        </div>
+        <div
+          style={{
+            marginBottom: "1em",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+          }}
+        >
+          <p
+            style={{
+              margin: "0",
+              padding: "0",
+              color: "var(--c-yellow-light)",
+              fontSize: "1em",
+            }}
+          >
+            Price Composition
+          </p>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            marginBottom: "1em",
+            gap: "1em",
+            alignItems: "center",
+            flexWrap: "wrap"
+          }}
+        >
+          <Toggle
+            name={"Markedspris"}
+            state={withMarketPrice}
+            set={setWithMarketPrice}
+          />
+          <Toggle
+            name={"Elafgift"}
+            state={withElafgift}
+            set={setWithElafgift}
+          />
+          <Toggle
+            name={"Radius Nettarif"}
+            state={withNetTarif}
+            set={setWithNetTarif}
+          />
+          <Toggle
+            name={"Moms"}
+            state={withVAT}
+            set={setWithVAT}
+          />
+        </div>
+        <div
+          style={{
+            marginBottom: "1em",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+          }}
+        >
+          <p
+            style={{
+              margin: "0",
+              padding: "0",
+              color: "var(--c-yellow-light)",
+              fontSize: "1em",
+            }}
+          >
+            Display Options
+          </p>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            gap: "1em",
+            alignItems: "center",
+            flexWrap: "wrap"
+          }}
+        >
+          <Toggle
+            name={"Fixed price axis baseline"}
+            state={fixedBaseline}
+            set={setFixedBaseline}
+          />
+        </div>
       </div>
     </div>
   )
@@ -300,9 +430,7 @@ function Header({data, highlightTime, currTime}: {data: { date: Date; price: num
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      padding: "2em 0em 1em 0em",
-      // flexWrap: "wrap",
-      // backgroundColor: "#eee",
+      padding: "1em 0em 1em 0em",
       borderRadius: "0 0 1.5em 1.5em"
     }}
   >
@@ -314,35 +442,37 @@ function Header({data, highlightTime, currTime}: {data: { date: Date; price: num
         gap: "0.5em"
       }}
     >
-      <h1
+      <p
         style={{
           color: "var(--color-text)",
           margin: "0",
+          fontSize: "2em",
         }}
       >
         {Math.round(findPrice(data, highlightTime ?? currTime) ?? 0)}
-      </h1>
-      <h4
+      </p>
+      <p
         style={{
           color: "var(--color-text)",
           margin: "0",
         }}
       >
         øre kWh
-      </h4>
+      </p>
     </div>
-    <h4
+    <p
       style={{
         color: "var(--color-text)",
-        margin: "0"
+        margin: "0",
       }}
     >
       {myFormat(highlightTime ?? currTime)}
-    </h4>
+    </p>
   </div>;
 }
 
 function DateRangeRadioButton({name, value, numHoursShown, setNumHoursShown}: {name: string, value: number, numHoursShown: number, setNumHoursShown: Dispatch<SetStateAction<number>>}) {
+  const isActive = numHoursShown == value
   return <button
       tabIndex={0}
       style={{
@@ -352,23 +482,23 @@ function DateRangeRadioButton({name, value, numHoursShown, setNumHoursShown}: {n
         margin: "0.5em 0",
         padding: "0.5em 1.5em",
         borderRadius: "10000px",
-        backgroundColor: (numHoursShown === value)
-          ? "var(--color-background-hue)"
+        backgroundColor: isActive
+          ? "var(--c-purple-mid)"
           : "inherit",
-        color: (numHoursShown === value)
-          ? "var(--color-foreground-hue)"
-          : "var(--color-text-2)"
+        color: isActive
+          ? "var(--c-yellow-mid)"
+          : "var(--c-yellow-dark)"
       }}
       onClick={e => setNumHoursShown(value)}
     >
-      <h4
+      <p
         style={{
           margin: "0",
           pointerEvents: "none",
         }}
       >
         {name}
-      </h4>
+      </p>
   </button>
 }
 
@@ -385,29 +515,30 @@ function Toggle({name, state, set}: {name: string, state: boolean, set: Dispatch
         alignItems: "center",
         padding: "0.5em 1.5em",
         border: "none",
-        color: state 
-          ? "var(--color-foreground-hue)" 
-          : "var(--color-text-2)",
-        // background: "none",
-        backgroundColor: state 
-          ? "var(--color-background-hue)" 
-          : "inherit",
+        color: state
+          ? "var(--c-purple-mid)"
+          : "var(--c-yellow-dark)",
+        backgroundColor: state
+          ? "var(--c-yellow-mid)"
+          : "var(--c-purple-dark)",
         borderRadius: "10px",
       }}
       onClick={e => set(!state)}
     >
-      <input
-        tabIndex={-1}
+      {/* <div
         style={{
           pointerEvents: "none",
-          marginRight: "1em",
+          margin: "0 1em 0 0",
+          padding: "0",
         }}
-        type="checkbox"
-        name="with"
-        id={`with-${name}`}
-        checked={state}
-      />
-      <h4
+      >
+        {
+          state
+          ? checkbox_active
+          : checkbox_inactive
+        }
+      </div> */}
+      <p
         style={{
           pointerEvents: "none",
           borderRadius: "1000px",
@@ -415,11 +546,10 @@ function Toggle({name, state, set}: {name: string, state: boolean, set: Dispatch
         }}
       >
         {name}
-      </h4>
+      </p>
     </button>
   )
 }
-
 
 function findPrice(
   data: DataEntries,
@@ -475,7 +605,7 @@ function YAxis({dms, yScale}: {dms: NewChartSettings, yScale: TypeYScale}) {
   )
 }
 
-function MinText({ xScale, yScale, minPriceItem }: { xScale: TypeXScale, minPriceItem: { date: Date; price: number; }, yScale: TypeYScale }) {
+function MinText({ xScale, yScale, minPriceItem, xclamp }: { xScale: TypeXScale, minPriceItem: { date: Date; price: number; }, yScale: TypeYScale, xclamp: (x: number) => number }) {
   return (
     <text
       style={{
@@ -486,7 +616,7 @@ function MinText({ xScale, yScale, minPriceItem }: { xScale: TypeXScale, minPric
         fill: "var(--color-text-2)",
         pointerEvents: "none"
       }}
-      x={xScale(minPriceItem.date)}
+      x={xclamp(xScale(minPriceItem.date))}
       y={yScale(minPriceItem.price)}
     >
       {`ØRE ${Math.round(minPriceItem.price)}`}
@@ -494,7 +624,7 @@ function MinText({ xScale, yScale, minPriceItem }: { xScale: TypeXScale, minPric
   )
 }
 
-function MaxText({ xScale, yScale, maxPriceItem }: { xScale: TypeXScale, maxPriceItem: { date: Date; price: number; }, yScale: TypeYScale }) {
+function MaxText({ xScale, yScale, maxPriceItem, xclamp }: { xScale: TypeXScale, maxPriceItem: { date: Date; price: number; }, yScale: TypeYScale, xclamp: (x: number) => number }) {
   return <text
     style={{
       transform: "translateY(-20px)",
@@ -503,50 +633,12 @@ function MaxText({ xScale, yScale, maxPriceItem }: { xScale: TypeXScale, maxPric
       fill: "var(--color-text-2)",
       pointerEvents: "none"
     }}
-    x={xScale(maxPriceItem.date)}
+    x={xclamp(xScale(maxPriceItem.date))}
     y={yScale(maxPriceItem.price)}
   >
     {`ØRE ${Math.round(maxPriceItem.price)}`}
   </text>;
 }
-
-// function StepGradient({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
-//   const stepCurve = createStepCurve(data, xScale, yScale)
-
-//   const closedStepCurve = stepCurve + " " + [
-//     "V", yScale(0),
-//     "H", xScale(data[0].date),
-//     "Z"
-//   ].join(" ")
-
-//   return (
-//     <>
-//       <path
-//         d={closedStepCurve}
-//         fill="url(#Gradient1)"
-//         mask="url(#fade)"
-//       />
-//       <defs>
-//         <linearGradient id="Gradient1">
-//           <stop offset="0%"   stopColor="hsl(250,72%,27%)" />
-//           <stop offset="20%"  stopColor="hsl(252,75%,32%)" />
-//           <stop offset="30%"  stopColor="hsl(260,89%,40%)" />
-//           <stop offset="50%"  stopColor="hsl(277,85%,45%)" />
-//           <stop offset="70%"  stopColor="hsl(294,75%,45%)" />
-//           <stop offset="80%"  stopColor="hsl(327,55%,62%)" />
-//           <stop offset="100%" stopColor="hsl(307,41%,68%)" />
-//         </linearGradient>
-//         <linearGradient id="fadeGrad" y2="1" x2="0">
-//           <stop offset="0%" stopColor="white" stopOpacity="1"/>
-//           <stop offset="100%" stopColor="white" stopOpacity="0"/>
-//         </linearGradient>
-//         <mask id="fade" maskContentUnits="objectBoundingBox">
-//           <rect width="1" height="1" fill="url(#fadeGrad)"/>
-//         </mask>
-//       </defs>
-//     </>
-//   )
-// }
 
 function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
 
@@ -557,7 +649,7 @@ function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXS
       <path
         d={stepCurve}
         fill="none"
-        stroke="var(--color-foreground-hue)"
+        stroke="var(--c-yellow-mid)"
         strokeWidth={2}
         strokeLinecap="round"
         style={{
@@ -588,3 +680,13 @@ function roundDecimal(num: number, decimals: number) {
   const factor = Math.pow(10, decimals)
   return Math.round(num * factor) / factor
 }
+
+const settings_icon = <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 48 48"><path d="m18.3 45.25-1.05-6.7q-.65-.2-1.475-.675-.825-.475-1.375-.925l-6.25 2.9-5.8-10.25 5.7-4.15q-.05-.3-.075-.725Q7.95 24.3 7.95 24t.025-.725q.025-.425.075-.725l-5.7-4.2L8.15 8.2l6.35 2.85q.5-.4 1.3-.85.8-.45 1.45-.65L18.3 2.7h11.4l1.05 6.8q.65.25 1.475.675.825.425 1.375.875l6.3-2.85 5.75 10.15-5.75 4.1q.05.35.1.775.05.425.05.775 0 .35-.05.75t-.1.75l5.75 4.1-5.8 10.25-6.3-2.9q-.55.45-1.325.925-.775.475-1.475.675l-1.05 6.7Zm5.6-14.75q2.7 0 4.6-1.9 1.9-1.9 1.9-4.6 0-2.7-1.9-4.6-1.9-1.9-4.6-1.9-2.7 0-4.6 1.9-1.9 1.9-1.9 4.6 0 2.7 1.9 4.6 1.9 1.9 4.6 1.9Z"/></svg>
+
+const checkbox_active = <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 42 42">
+  <path fill="var(--c-purple-dark)" d="M20.95 31.95 35.4 17.5l-2.15-2.15-12.3 12.3L15 21.7l-2.15 2.15ZM9 42q-1.2 0-2.1-.9Q6 40.2 6 39V9q0-1.2.9-2.1Q7.8 6 9 6h30q1.2 0 2.1.9.9.9.9 2.1v30q0 1.2-.9 2.1-.9.9-2.1.9Zm0-3h30V9H9v30ZM9 9v30V9Z"/>
+</svg>
+
+const checkbox_inactive = <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 42 42">
+  <path fill="var(--c-yellow-light)" d="M9 42q-1.2 0-2.1-.9Q6 40.2 6 39V9q0-1.2.9-2.1Q7.8 6 9 6h30q1.2 0 2.1.9.9.9.9 2.1v30q0 1.2-.9 2.1-.9.9-2.1.9Zm0-3h30V9H9v30Z"/>
+</svg>
