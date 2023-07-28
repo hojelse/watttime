@@ -36,20 +36,52 @@ export const metadata: Metadata = {
 //     { media: '(prefers-color-scheme: light)', color: 'cyan' },
 //     { media: '(prefers-color-scheme: dark)', color: 'black' },
 //   ],
-//   icons: {
+  icons: {
 //     icon: [{ url: '/icon.png' }, new URL('/icon.png', 'https://example.com')],
 //     shortcut: ['/shortcut-icon.png'],
 //     apple: [
 //       { url: '/apple-icon.png' },
 //       { url: '/apple-icon-x3.png', sizes: '180x180', type: 'image/png' },
 //     ],
-//     other: [
-//       {
-//         rel: 'apple-touch-icon-precomposed',
-//         url: '/apple-touch-icon-precomposed.png',
-//       },
-//     ],
-//   },
+    other: [
+      {
+        rel: 'icons/watttime-icon-72x72.png',
+        url: '/icons/watttime-icon-72x72.png.png',
+      },
+      {
+        rel: "icons/watttime-icon-72x72.png",
+        url: "/icons/watttime-icon-72x72.png",
+      },
+      {
+        rel: "icons/watttime-icon-96x96.png",
+        url: "/icons/watttime-icon-96x96.png",
+      },
+      {
+        rel: "icons/watttime-icon-128x128.png",
+        url: "/icons/watttime-icon-128x128.png",
+      },
+      {
+        rel: "icons/watttime-icon-144x144.png",
+        url: "/icons/watttime-icon-144x144.png",
+      },
+      {
+        rel: "icons/watttime-icon-152x152.png",
+        url: "/icons/watttime-icon-152x152.png",
+      },
+      {
+        rel: "icons/watttime-icon-192x192.png",
+        url: "/icons/watttime-icon-192x192.png",
+      },
+      {
+        rel: "icons/watttime-icon-384x384.png",
+        url: "/icons/watttime-icon-384x384.png",
+      },
+      {
+        rel: "icons/watttime-icon-512x512.png",
+        url: "/icons/watttime-icon-512x512.png",
+      }
+    ],
+  },
 //   openGraph: {
 //     title: 'Watttime.dk',
 //     description: 'Electricity prices in Denmark',
