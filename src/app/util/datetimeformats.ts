@@ -16,31 +16,31 @@ export function dayOfTheMonthFormat(date: Date) {
 
 export function monthFormat(date: Date) {
   switch (date.getMonth()) {
-    case 1: return "Jan";
-    case 2: return "Feb";
-    case 3: return "Mar";
-    case 4: return "Apr";
-    case 5: return "May";
-    case 6: return "Jun";
-    case 7: return "Jul";
-    case 8: return "Aug";
-    case 9: return "Sep";
-    case 10: return "Oct";
-    case 11: return "Nov";
-    case 12: return "Dec";
+    case 0: return "Jan";
+    case 1: return "Feb";
+    case 2: return "Mar";
+    case 3: return "Apr";
+    case 4: return "May";
+    case 5: return "Jun";
+    case 6: return "Jul";
+    case 7: return "Aug";
+    case 8: return "Sep";
+    case 9: return "Oct";
+    case 10: return "Nov";
+    case 11: return "Dec";
     default: return "Invalid month";
   }
 }
 
 export function weekDayFormat(date: Date) {
   switch (date.getDay()) {
+    case 0: return "Sun";
     case 1: return "Mon";
     case 2: return "Tue";
     case 3: return "Wed";
     case 4: return "Thu";
     case 5: return "Fri";
     case 6: return "Sat";
-    case 7: return "Sun";
     default: return "Invalid weekday";
   }
 }
