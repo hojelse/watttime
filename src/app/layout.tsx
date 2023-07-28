@@ -37,50 +37,43 @@ export const metadata: Metadata = {
 //     { media: '(prefers-color-scheme: dark)', color: 'black' },
 //   ],
   icons: {
-//     icon: [{ url: '/icon.png' }, new URL('/icon.png', 'https://example.com')],
-//     shortcut: ['/shortcut-icon.png'],
-//     apple: [
-//       { url: '/apple-icon.png' },
-//       { url: '/apple-icon-x3.png', sizes: '180x180', type: 'image/png' },
-//     ],
-    other: [
+    icon: [
       {
-        rel: 'icons/watttime-icon-72x72.png',
-        url: '/icons/watttime-icon-72x72.png.png',
+        url: '/icons/watttime-icon-72x72.png',
       },
       {
-        rel: "icons/watttime-icon-72x72.png",
         url: "/icons/watttime-icon-72x72.png",
       },
       {
-        rel: "icons/watttime-icon-96x96.png",
         url: "/icons/watttime-icon-96x96.png",
       },
       {
-        rel: "icons/watttime-icon-128x128.png",
         url: "/icons/watttime-icon-128x128.png",
       },
       {
-        rel: "icons/watttime-icon-144x144.png",
         url: "/icons/watttime-icon-144x144.png",
       },
       {
-        rel: "icons/watttime-icon-152x152.png",
         url: "/icons/watttime-icon-152x152.png",
       },
       {
-        rel: "icons/watttime-icon-192x192.png",
         url: "/icons/watttime-icon-192x192.png",
       },
       {
-        rel: "icons/watttime-icon-384x384.png",
         url: "/icons/watttime-icon-384x384.png",
       },
       {
-        rel: "icons/watttime-icon-512x512.png",
         url: "/icons/watttime-icon-512x512.png",
       }
     ],
+//     shortcut: ['/shortcut-icon.png'],
+    // apple: [
+    //   { url: '/apple-icon.png' },
+    //   { url: '/apple-icon-x3.png', sizes: '180x180', type: 'image/png' },
+    // ],
+    // other: [
+    
+    // ],
   },
 //   openGraph: {
 //     title: 'Watttime.dk',
