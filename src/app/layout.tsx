@@ -39,31 +39,31 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/icons/watttime-icon-72x72.png',
+        url: '/icon-72x72.png',
       },
       {
-        url: "/icons/watttime-icon-72x72.png",
+        url: "/icon-72x72.png",
       },
       {
-        url: "/icons/watttime-icon-96x96.png",
+        url: "/icon-96x96.png",
       },
       {
-        url: "/icons/watttime-icon-128x128.png",
+        url: "/icon-128x128.png",
       },
       {
-        url: "/icons/watttime-icon-144x144.png",
+        url: "/icon-144x144.png",
       },
       {
-        url: "/icons/watttime-icon-152x152.png",
+        url: "/icon-152x152.png",
       },
       {
-        url: "/icons/watttime-icon-192x192.png",
+        url: "/icon-192x192.png",
       },
       {
-        url: "/icons/watttime-icon-384x384.png",
+        url: "/icon-384x384.png",
       },
       {
-        url: "/icons/watttime-icon-512x512.png",
+        url: "/icon-512x512.png",
       }
     ],
 //     shortcut: ['/shortcut-icon.png'],
