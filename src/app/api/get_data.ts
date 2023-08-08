@@ -3,8 +3,6 @@ import { getNetTarifs } from "./get_net_tarifs";
 import { getElectricityTax } from "./get_electricity_tax";
 
 export async function getData() {
-  await new Promise(res => setTimeout(res, 1000))
-
   const marketPrices = await getMarketPrices()
 
   const tarifs = await getNetTarifs()

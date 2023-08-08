@@ -37,6 +37,11 @@ type DataEntriesApi = {
 }[]
 
 export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}) => {
+
+  if (dataEntries.length == 0) { 
+    throw new Error("No data entries...")
+  }
+
   const [currTime, setCurrTime] = useState(new Date())
 
   const refreshStuff = () => { setCurrTime(new Date()) }
