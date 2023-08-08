@@ -14,7 +14,9 @@ export default async function Home() {
         backgroundColor: "var(--color-background)",
       }}
     >
-      <InteractiveChart dataEntries={dataEntries}/>
+      <Suspense fallback={<div>loading...</div>}>
+        <InteractiveChart dataEntries={dataEntries}/>
+      </Suspense>
     </div>
   </>
 }
