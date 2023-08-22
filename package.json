@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@juggle/resize-observer": "^3.3.1",
+    "@vercel/analytics": "^1.0.2",
     "d3": "^7.6.1",
     "next": "12.2.2",
     "next-pwa": "^5.5.4",
