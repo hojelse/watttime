@@ -5,7 +5,7 @@ import * as d3 from "d3";
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { DateAxis } from "./DateAxis";
 import { PriceAxis } from "./PriceAxis";
-import { dayOfTheMonthFormat, hourFormat, minuteFormat, monthFormat, myDateTimeFormat as fullDateTimeFormat } from "../util/datetimeformats";
+import { myDateTimeFormat as fullDateTimeFormat } from "../util/datetimeformats";
 
 type DataEntries = {
   date: Date;
@@ -38,16 +38,17 @@ type DataEntriesApi = {
 
 export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}) => {
 
-  if (dataEntries.length == 0) { 
+  if (dataEntries.length == 0) {
     throw new Error("No data entries...")
   }
 
   const [currTime, setCurrTime] = useState(new Date())
+  const pointerId = useRef<number | null>(null);
 
-  const refreshStuff = () => { setCurrTime(new Date()) }
+  const updateCurrentTime = () => { setCurrTime(new Date()) }
 
   useEffect(() => {
-    const timerId = setInterval(refreshStuff, 100);
+    const timerId = setInterval(updateCurrentTime, 1000);
     return function cleanup() {
       clearInterval(timerId);
     };
@@ -85,7 +86,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
   ), [passedData])
 
   let hoursInFuture = 2 + Math.floor((data[data.length-1].date.getTime() - currTime.getTime())/1000/60/60)
-  
+
   const [numHoursShown, setNumHoursShown] = useState(hoursInFuture)
 
   const shownData = data.slice().splice(data.length - numHoursShown)
@@ -125,28 +126,17 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
   const xclamp = (x: number) => {
     const s = 30
     return canvas_bound_area
-      ? Math.max(s, Math.min(canvas_bound_area.right-s-canvas_bound_area.left, x))
+      ? Math.max(s, Math.min(canvas_bound_area.right - s - canvas_bound_area.left, x))
       : x
   }
-  const setStuff = (e: PointerEvent) => {
-    const s = 0.1
-    const offset = canvas_bound_area
-      ? Math.max(s, Math.min(canvas_bound_area.right-s-canvas_bound_area.left, e.clientX - canvas_bound_area.left))
+  const updateHighlightOffset = (x?: number) => {
+    const s = 0.1;
+    const offset = canvas_bound_area && x !== undefined
+      ? Math.max(s, Math.min(canvas_bound_area.right-s-canvas_bound_area.left, x - canvas_bound_area.left))
       : undefined
     setHighlightOffset(offset)
   }
 
-  boundArea.current?.addEventListener("pointerdown", e => {
-    boundArea.current?.setPointerCapture(e.pointerId)
-    setStuff(e)
-
-    boundArea.current?.addEventListener("pointermove", setStuff)
-    boundArea.current?.addEventListener("pointerup", () => {
-      setHighlightOffset(undefined)
-      boundArea.current?.releasePointerCapture(e.pointerId)
-      boundArea.current?.removeEventListener("pointermove", setStuff)
-    }, {once: true})
-  }, {once: true})
 
   const currOffset = xScale(currTime)
 
@@ -201,6 +191,21 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
             >
               <rect // transparent touch target
                 ref={boundArea}
+                onPointerDown={(e) => {
+                  e.currentTarget.setPointerCapture(e.pointerId);
+                  updateHighlightOffset(e.clientX);
+                  pointerId.current = e.pointerId;
+                }}
+                onPointerMove={(e) => {
+                  if (pointerId.current !== null) {
+                    updateHighlightOffset(e.clientX);
+                  }
+                }}
+                onPointerUp={(e) => {
+                  e.currentTarget.releasePointerCapture(pointerId.current!);
+                  updateHighlightOffset();
+                  pointerId.current = null;
+                }}
                 width={dms.boundedWidth}
                 height={dms.boundedHeight}
                 fillOpacity="0"
@@ -663,13 +668,15 @@ function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXS
 }
 
 function createStepCurve(data: DataEntries, xScale: TypeXScale, yScale: TypeYScale) {
-  const head = data.slice().splice(0, 1)[0]
-  
-  const start = ["M", xScale(head.date), yScale(head.price), "H", xScale(addHours(1, head.date))].join(" ")
-  const mid = data.map(({date, price}) => {
-    return ["L", xScale(date), yScale(price), "H", xScale(addHours(1, date))].join(" ")
-  })
-  return start + " " + mid.join(" ")
+  return (
+    data
+      .map(({ date, price }, i) =>
+        i === 0
+          ? ["M", xScale(date), yScale(price)].join(" ")
+          : ["H", xScale(date), "V", yScale(price)].join(" ")
+      )
+      .join(" ")
+  )
 }
 
 function addHours(numOfHours: number, date: Date) {
