@@ -557,11 +557,12 @@ function findPrice(
   date: Date
 ) {
   const dateFloor = date
-  dateFloor.setMinutes(0, 0, 0)
+  const quarterHourOffset = Math.floor(date.getMinutes() / 60 * 4) * 15;
+  dateFloor.setMinutes(quarterHourOffset, 0, 0)
 
   const dateCeil = addHours(1, dateFloor)
 
-  
+
   for (let i = 0; i < data.length; i++) {
     const el = data[i];
     if (dateFloor <= el.date && el.date <= dateCeil) {
