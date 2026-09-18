@@ -10,8 +10,10 @@ export async function getData() {
   const firstApplicableTarifOrDefault = (date: Date, defaultValue: number) => {
     for (let i = 0; i < tarifs.length; i++) {
       const tarif = tarifs[i];
-      if (tarif.from <= date && date <= tarif.to)
-        return tarif.hours[date.getHours()]
+      if (tarif.from <= date && date <= tarif.to) {
+        const hourIndex = date.getHours()
+        return tarif.hours[hourIndex]
+      }
     }
     return defaultValue
   }
