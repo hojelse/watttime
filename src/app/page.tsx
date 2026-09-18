@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { InteractiveChart } from "./components/InteractiveChart";
+import { ChartWrapper } from "./components/ChartWrapper";
 import { getData } from "./api/get_data";
 
 export default async function Home() {
@@ -15,7 +16,9 @@ export default async function Home() {
       }}
     >
       <Suspense fallback={<div>loading...</div>}>
-        <InteractiveChart dataEntries={dataEntries}/>
+        <ChartWrapper>
+          <InteractiveChart dataEntries={dataEntries}/>
+        </ChartWrapper>
       </Suspense>
     </div>
   </>

@@ -10,7 +10,7 @@ type ArgType = {
   numHoursShown: number
 }
 
-export const DateAxis = ({ dms, domain, range, numHoursShown }: ArgType) => {
+export const DateAxis = ({ dms, domain, range }: ArgType) => {
   const ticks = useMemo(() => {
     const xScale = d3.scaleTime()
       .domain(domain)
@@ -32,6 +32,7 @@ export const DateAxis = ({ dms, domain, range, numHoursShown }: ArgType) => {
   const first: Date = domain[0]
   const last: Date = domain[domain.length-1]
   const diffHours = Math.abs(last.valueOf() - first.valueOf()) / (60*60*1000);
+  const isMonthView = diffHours >= 7 * 24;
 
   return (
     <g>
@@ -49,7 +50,7 @@ export const DateAxis = ({ dms, domain, range, numHoursShown }: ArgType) => {
           {
             (
               value.getDate() == 1 && // is first day of month
-              numHoursShown >= 7*24+1 // is month view
+              isMonthView
             )
             ? MonthText(value)
             : null
@@ -58,7 +59,7 @@ export const DateAxis = ({ dms, domain, range, numHoursShown }: ArgType) => {
           {
             (
               value.getHours() == 0 && // is first hour of day
-              numHoursShown > 7*24 // is month view
+              isMonthView
             )
             ? DayOfMonthText(value)
             : null
@@ -66,15 +67,15 @@ export const DateAxis = ({ dms, domain, range, numHoursShown }: ArgType) => {
           {
             (
               value.getHours() == 0 && // is first hour of day
-              numHoursShown <= 7*24 // isn't month view
-            ) 
+              !isMonthView
+            )
             ? WeekDayText(value)
             : null
           }
 
           {
             (
-              numHoursShown <= 7*24 // isn't month view
+              !isMonthView
             )
             ? HourText(value)
             : null

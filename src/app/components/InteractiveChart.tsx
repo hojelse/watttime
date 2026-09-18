@@ -42,17 +42,18 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
     throw new Error("No data entries...")
   }
 
-  const [currTime, setCurrTime] = useState(new Date())
+  const [currTime, setCurrTime] = useState<Date | null>(null)
   const pointerId = useRef<number | null>(null);
 
   const updateCurrentTime = () => { setCurrTime(new Date()) }
 
   useEffect(() => {
+    setCurrTime(new Date())
     const timerId = setInterval(updateCurrentTime, 1000);
     return function cleanup() {
       clearInterval(timerId);
     };
-  }, [currTime]);
+  }, []);
 
   const [withMarketPrice, setWithMarketPrice] = useState(true)
   const [withElafgift, setWithElafgift] = useState(true)
@@ -85,21 +86,25 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
     passedData.slice().reverse()
   ), [passedData])
 
-  let hoursInFuture = 2 + Math.floor((data[data.length-1].date.getTime() - currTime.getTime())/1000/60/60)
+  let hoursInFuture = currTime ? 2 + Math.floor((data[data.length-1].date.getTime() - currTime.getTime())/1000/60/60) : 24
 
   const [numHoursShown, setNumHoursShown] = useState(hoursInFuture)
 
-  const shownData = data.slice().splice(data.length - numHoursShown)
+  const shownData = useMemo(() => {
+    if (data.length === 0) return []
+    const maxDate = data[data.length - 1].date
+    const targetStartTime = new Date(maxDate.getTime() - numHoursShown * 60 * 60 * 1000)
+    return data.filter(entry => entry.date >= targetStartTime)
+  }, [data, numHoursShown])
 
   const minPriceItem = shownData.reduce((prev, curr) => (prev.price < curr.price) ? prev : curr, {date: new Date(), price: Number.MAX_SAFE_INTEGER});
   const minPrice = minPriceItem.price
   const maxPriceItem = shownData.reduce((prev, curr) => (prev.price > curr.price) ? prev : curr, {date: new Date(), price: Number.MIN_SAFE_INTEGER});
   const maxPrice = maxPriceItem.price
 
-  const minDate = shownData[0].date
-  const maxDate = shownData[shownData.length-1].date
-
-  const beginDate = addHours(1-numHoursShown, maxDate)
+  const maxDate = shownData[shownData.length-1]?.date ?? new Date()
+  const minDate = shownData[0]?.date ?? maxDate
+  const beginDate = minDate
 
   const boundPadding = 50
 
@@ -138,7 +143,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
   }
 
 
-  const currOffset = xScale(currTime)
+  const currOffset = currTime ? xScale(currTime) : undefined
 
   const [openSettings, setOpenSettings] = useState(false)
 
@@ -152,7 +157,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
         padding: "0em 1em 1em 1em",
       }}
     >
-      <Header data={data} highlightTime={highlightTime} currTime={currTime}/>
+      {currTime && <Header data={data} highlightTime={highlightTime} currTime={currTime}/>}
       <div style={{
           width: "100%",
           minHeight: "0",
@@ -227,6 +232,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
                 yScale={yScale}
                 data={data}
               />
+              {currOffset !== undefined && <>
               <line
                 stroke="var(--color-text)"
                 x1={highlightOffset ?? currOffset} y1={0}
@@ -239,7 +245,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
               />
               <circle
                 cx={highlightOffset ?? currOffset}
-                cy={yScale(findPrice(data, highlightTime ?? currTime) ?? 0)}
+                cy={yScale(findPrice(data, highlightTime ?? currTime!) ?? 0)}
                 r={5}
                 stroke="var(--color-text)"
                 strokeWidth={2}
@@ -248,6 +254,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
                   pointerEvents: "none"
                 }}
               />
+              </>}
             </g>
           </svg>
         </div>
