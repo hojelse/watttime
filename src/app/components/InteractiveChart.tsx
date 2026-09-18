@@ -232,7 +232,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
                 yScale={yScale}
                 data={data}
               />
-              {currOffset !== undefined && <>
+              {currOffset !== undefined &&
               <line
                 stroke="var(--color-text)"
                 x1={highlightOffset ?? currOffset} y1={0}
@@ -243,7 +243,8 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
                   pointerEvents: "none"
                 }}
               />
-              <circle
+              }
+              {currOffset !== undefined && findPrice(data, highlightTime ?? currTime!) !== null && <circle
                 cx={highlightOffset ?? currOffset}
                 cy={yScale(findPrice(data, highlightTime ?? currTime!) ?? 0)}
                 r={5}
@@ -253,8 +254,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
                 style={{
                   pointerEvents: "none"
                 }}
-              />
-              </>}
+              />}
             </g>
           </svg>
         </div>
@@ -437,6 +437,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
 }
 
 function Header({data, highlightTime, currTime}: {data: { date: Date; price: number; }[], highlightTime: Date | undefined, currTime: Date}) {
+  const price = findPrice(data, highlightTime ?? currTime)
   return <div
     style={{
       display: "flex",
@@ -462,7 +463,7 @@ function Header({data, highlightTime, currTime}: {data: { date: Date; price: num
           fontSize: "2em",
         }}
       >
-        {Math.round(findPrice(data, highlightTime ?? currTime) ?? 0)}
+        {price === null ? "??" : Math.round(price)}
       </p>
       <p
         style={{
