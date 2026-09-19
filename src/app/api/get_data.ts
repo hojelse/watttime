@@ -11,7 +11,7 @@ export async function getData() {
     for (let i = 0; i < tarifs.length; i++) {
       const tarif = tarifs[i];
       if (tarif.from <= date && date <= tarif.to) {
-        const hourIndex = date.getHours()
+        const hourIndex = date.getUTCHours()
         return tarif.hours[hourIndex]
       }
     }
