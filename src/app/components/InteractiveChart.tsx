@@ -118,9 +118,14 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
       .domain([maxPrice, priceBaseLine])
       .range([boundPadding, -boundPadding + dms.boundedHeight])
 
+  const dataPointSpacing = shownData.length >= 2
+    ? shownData[shownData.length-1].date.getTime() - shownData[shownData.length-2].date.getTime()
+    : 60 * 60 * 1000
+  const maxDateWithOffset = new Date(maxDate.getTime() + dataPointSpacing)
+
   const xScale =
     d3.scaleTime()
-      .domain([beginDate, addHours(1, maxDate)])
+      .domain([beginDate, maxDateWithOffset])
       .range([0, dms.boundedWidth])
       .nice()
 
@@ -231,6 +236,7 @@ export const InteractiveChart = ({ dataEntries }: { dataEntries: DataEntriesApi}
                 xScale={xScale}
                 yScale={yScale}
                 data={data}
+                maxDateWithOffset={maxDateWithOffset}
               />
               {currOffset !== undefined &&
               <line
@@ -655,9 +661,9 @@ function MaxText({ xScale, yScale, maxPriceItem, xclamp }: { xScale: TypeXScale,
   </text>;
 }
 
-function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale}) {
+function StepCurve({ data, xScale, yScale, maxDateWithOffset }: { data: DataEntries, xScale: TypeXScale, yScale: TypeYScale, maxDateWithOffset: Date }) {
 
-  const stepCurve = createStepCurve(data, xScale, yScale)
+  const stepCurve = createStepCurve(data, xScale, yScale, maxDateWithOffset)
 
   return (
     <>
@@ -675,16 +681,18 @@ function StepCurve({ data, xScale, yScale }: { data: DataEntries, xScale: TypeXS
   )
 }
 
-function createStepCurve(data: DataEntries, xScale: TypeXScale, yScale: TypeYScale) {
-  return (
-    data
-      .map(({ date, price }, i) =>
-        i === 0
-          ? ["M", xScale(date), yScale(price)].join(" ")
-          : ["H", xScale(date), "V", yScale(price)].join(" ")
-      )
-      .join(" ")
+function createStepCurve(data: DataEntries, xScale: TypeXScale, yScale: TypeYScale, maxDateWithOffset: Date) {
+  const pathSegments = data.map(({ date, price }, i) =>
+    i === 0
+      ? ["M", xScale(date), yScale(price)].join(" ")
+      : ["H", xScale(date), "V", yScale(price)].join(" ")
   )
+
+  if (data.length > 0) {
+    pathSegments.push(["H", xScale(maxDateWithOffset)].join(" "))
+  }
+
+  return pathSegments.join(" ")
 }
 
 function addHours(numOfHours: number, date: Date) {
